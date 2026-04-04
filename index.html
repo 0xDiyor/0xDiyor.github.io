@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>0xDiyor</title>
+  <meta name="description" content="Cybersecurity portfolio, projects, and writeups by 0xDiyor">
+  <meta name="theme-color" content="#0a0a0f">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:title" content="0xDiyor — Cybersecurity Portfolio">
+  <meta property="og:description" content="Cybersecurity portfolio, projects, and writeups">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="0xDiyor — Cybersecurity Portfolio">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self';">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0f;
+      --bg-surface: #0f0f18;
+      --text: #c8c8d0;
+      --text-dim: #6a6a7a;
+      --text-bright: #e8e8f0;
+      --accent: #00e5a0;
+      --accent-dim: #00b87d;
+      --accent-glow: rgba(0, 229, 160, 0.08);
+      --border: #1e1e2e;
+      --code-bg: #12121c;
+      --link: #00e5a0;
+      --link-hover: #40ffca;
+      --mono: 'JetBrains Mono', 'Courier New', monospace;
+      --display: 'Space Mono', monospace;
+      --max-w: 720px;
+      --gutter: 1.5rem;
+    }
+
+    html {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 15px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    ::selection {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    a {
+      color: var(--link);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    a:hover { color: var(--link-hover); }
+
+    /* ── Layout ── */
+    .container {
+      width: 100%;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+    }
+
+    /* ── Nav ── */
+    .site-nav {
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      background: rgba(10, 10, 15, 0.92);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .nav-links {
+      display: flex;
+      gap: 0.25rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-dim);
+      font-size: 0.82rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 4px;
+      transition: color 0.15s, background 0.15s;
+      letter-spacing: 0.02em;
+    }
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--accent);
+      background: var(--accent-glow);
+    }
+
+    /* ── ASCII Banner ── */
+    .ascii-banner {
+      position: relative;
+      padding: 0;
+      text-align: center;
+      overflow: hidden;
+      min-height: 340px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .ascii-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+    .banner-overlay {
+      position: relative;
+      z-index: 1;
+      padding: 3rem 0 1rem;
+    }
+    .ascii-art {
+      font-family: var(--mono);
+      font-size: clamp(0.55rem, 2.2vw, 1.1rem);
+      line-height: 1.25;
+      color: var(--accent);
+      white-space: pre;
+      display: inline-block;
+      text-align: left;
+      opacity: 0;
+      animation: fadeIn 0.6s ease-out 0.2s forwards;
+      text-shadow: 0 0 30px rgba(0, 229, 160, 0.25), 0 0 60px rgba(0, 229, 160, 0.08);
+      position: relative;
+    }
+    .banner-sub {
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      opacity: 0;
+      animation: fadeIn 0.6s ease-out 0.5s forwards;
+    }
+    .banner-links {
+      margin-top: 1rem;
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      opacity: 0;
+      animation: fadeIn 0.6s ease-out 0.7s forwards;
+    }
+    .banner-links a {
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      transition: color 0.15s;
+    }
+    .banner-links a:hover { color: var(--accent); }
+    .banner-links a::before {
+      content: '>';
+      color: var(--accent-dim);
+      margin-right: 0.3rem;
+      font-weight: 700;
+    }
+
+    /* ── Sections ── */
+    .page-section {
+      display: none;
+      padding: 2.5rem 0 4rem;
+      opacity: 0;
+      animation: fadeIn 0.35s ease-out forwards;
+    }
+    .page-section.active { display: block; }
+
+    .section-title {
+      font-family: var(--display);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    .section-title::before {
+      content: '# ';
+      color: var(--accent-dim);
+    }
+
+    /* ── Blog List ── */
+    .post-list { list-style: none; }
+    .post-item {
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    .post-item:first-child { border-top: none; }
+    .post-item a.post-link {
+      display: block;
+      color: var(--text-bright);
+      font-size: 1.05rem;
+      font-weight: 500;
+      line-height: 1.4;
+      transition: color 0.15s;
+    }
+    .post-item a.post-link:hover { color: var(--accent); }
+    .post-meta {
+      margin-top: 0.4rem;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .post-tag {
+      font-size: 0.7rem;
+      padding: 0.15rem 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--text-dim);
+    }
+    .post-description {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    /* ── Post View ── */
+    .post-view { display: none; }
+    .post-view.active { display: block; }
+
+    .post-back {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-bottom: 2rem;
+      display: inline-block;
+    }
+    .post-back:hover { color: var(--accent); }
+
+    .post-header {
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .post-header h1 {
+      font-family: var(--display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+    }
+    .post-header .post-meta { margin-top: 0.75rem; }
+
+    .post-toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .post-toc summary {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      cursor: pointer;
+      list-style: none;
+    }
+    .post-toc summary::before {
+      content: '▸ ';
+      color: var(--accent-dim);
+    }
+    .post-toc[open] summary::before { content: '▾ '; }
+    .post-toc ol {
+      margin-top: 0.75rem;
+      padding-left: 1.25rem;
+      list-style-type: decimal;
+    }
+    .post-toc li {
+      margin: 0.3rem 0;
+      font-size: 0.82rem;
+    }
+    .post-toc a {
+      color: var(--text);
+      transition: color 0.15s;
+    }
+    .post-toc a:hover { color: var(--accent); }
+
+    /* ── Markdown Content ── */
+    .post-content h2 {
+      font-family: var(--display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      margin: 2.5rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .post-content h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-bright);
+      margin: 2rem 0 0.75rem;
+    }
+    .post-content p {
+      margin-bottom: 1.2rem;
+    }
+    .post-content ul, .post-content ol {
+      margin-bottom: 1.2rem;
+      padding-left: 1.5rem;
+    }
+    .post-content li { margin-bottom: 0.4rem; }
+    .post-content code {
+      font-family: var(--mono);
+      font-size: 0.88em;
+      background: var(--code-bg);
+      padding: 0.15em 0.4em;
+      border-radius: 3px;
+      color: var(--accent);
+    }
+    .post-content pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      font-size: 0.82rem;
+      line-height: 1.6;
+    }
+    .post-content pre code {
+      background: none;
+      padding: 0;
+      color: var(--text);
+    }
+    .post-content blockquote {
+      border-left: 3px solid var(--accent-dim);
+      padding: 0.5rem 1rem;
+      margin: 1.5rem 0;
+      color: var(--text-dim);
+      background: var(--accent-glow);
+      border-radius: 0 4px 4px 0;
+    }
+    .post-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      margin: 1rem 0;
+    }
+    .post-content a { border-bottom: 1px solid var(--accent-dim); }
+    .post-content a:hover { border-bottom-color: var(--link-hover); }
+    .post-content code {
+      word-break: break-word;
+    }
+    .post-content pre code {
+      word-break: normal;
+    }
+
+    /* ── Projects ── */
+    .project-grid {
+      display: grid;
+      gap: 1rem;
+    }
+    .project-card {
+      display: block;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
+      position: relative;
+    }
+    .project-card::after {
+      content: '↗';
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      opacity: 0;
+      transition: opacity 0.2s, color 0.2s;
+    }
+    .project-card:hover {
+      border-color: var(--accent-dim);
+      box-shadow: 0 0 20px rgba(0, 229, 160, 0.04);
+      color: inherit;
+      transform: translateY(-2px);
+    }
+    .project-card:hover::after {
+      opacity: 1;
+      color: var(--accent);
+    }
+    .project-name {
+      font-weight: 600;
+      color: var(--text-bright);
+      font-size: 1rem;
+    }
+    .project-desc {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+    .project-tech {
+      margin-top: 0.75rem;
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .project-tech span {
+      font-size: 0.68rem;
+      padding: 0.15rem 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--accent-dim);
+      letter-spacing: 0.03em;
+    }
+
+    /* ── About ── */
+    .about-content {
+      font-size: 0.92rem;
+      line-height: 1.8;
+    }
+    .about-content p { margin-bottom: 1.2rem; }
+    .about-content .cert-list {
+      list-style: none;
+      margin: 1rem 0 1.5rem;
+    }
+    .about-content .cert-list li {
+      padding: 0.3rem 0;
+      font-size: 0.85rem;
+    }
+    .about-content .cert-list li::before {
+      content: '✓ ';
+      color: var(--accent);
+      font-weight: 700;
+    }
+    /* ── Footer ── */
+    .site-footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 0;
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* ── Empty state ── */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+    .empty-state::before {
+      content: '¯\\_(ツ)_/¯';
+      display: block;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 768px) {
+      .ascii-banner { min-height: 280px; }
+      .post-content pre { font-size: 0.78rem; padding: 1rem; }
+      .project-card { padding: 1rem 1.25rem; }
+    }
+
+    @media (max-width: 600px) {
+      html { font-size: 14px; }
+      :root { --gutter: 1rem; }
+      .nav-inner { gap: 0.5rem; }
+      .nav-links { gap: 0.1rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+      .nav-links::-webkit-scrollbar { display: none; }
+      .nav-links a { padding: 0.4rem 0.5rem; font-size: 0.75rem; white-space: nowrap; min-height: 44px; display: flex; align-items: center; }
+      .ascii-art { font-size: clamp(0.4rem, 1.8vw, 0.85rem); }
+      .ascii-banner { min-height: 240px; }
+      .banner-overlay { padding: 2rem 0 1rem; }
+      .post-header h1 { font-size: 1.3rem; }
+      .banner-links { gap: 1rem; }
+      .post-toc { padding: 1rem; }
+      .post-content pre { padding: 0.75rem; font-size: 0.75rem; }
+      .post-meta { font-size: 0.72rem; }
+    }
+
+    @media (max-width: 380px) {
+      .ascii-art { font-size: 0.38rem; }
+      .banner-sub { font-size: 0.75rem; }
+    }
+
+    /* ── Reduced motion ── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+      .ascii-canvas { display: none; }
+    }
+
+    /* ── Focus styles for keyboard nav ── */
+    a:focus-visible, summary:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="site-nav">
+    <div class="container nav-inner">
+      <ul class="nav-links">
+        <li><a href="#/" data-nav="home">home</a></li>
+        <li><a href="#/blog" data-nav="blog">blog</a></li>
+        <li><a href="#/projects" data-nav="projects">projects</a></li>
+        <li><a href="#/about" data-nav="about">about</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- ═══ HOME ═══ -->
+    <section id="page-home" class="page-section">
+      <div class="ascii-banner">
+        <canvas class="ascii-canvas" id="ascii-bg"></canvas>
+        <div class="banner-overlay">
+          <pre class="ascii-art">
+  ___       ____  _____   _____  ____
+ / _ \__  _|  _ \_ _\ \ / / _ \|  _ \
+| | | \ \/ / | | | | \ V / | | | |_) |
+| |_| |>  <| |_| | |  | || |_| |  _ <
+ \___//_/\_\____/___| |_| \___/|_| \_\</pre>
+          <p class="banner-sub">cybersecurity &middot; homelabbing &middot; writeups</p>
+          <div class="banner-links">
+            <a href="https://github.com/0xDiyor" target="_blank" rel="noopener noreferrer">github</a>
+            <a href="https://www.linkedin.com/in/diyor-r/" target="_blank" rel="noopener noreferrer">linkedin</a>
+            <a href="#/blog">blog</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent posts on home -->
+      <div style="margin-top: 2.5rem;">
+        <h2 class="section-title">Recent Posts</h2>
+        <ul class="post-list" id="recent-posts"></ul>
+      </div>
+
+      <!-- Recent projects on home -->
+      <div style="margin-top: 2.5rem;">
+        <h2 class="section-title">Recent Projects</h2>
+        <div class="project-grid" id="recent-projects"></div>
+      </div>
+    </section>
+
+    <!-- ═══ BLOG ═══ -->
+    <section id="page-blog" class="page-section">
+      <h2 class="section-title">Blog</h2>
+      <ul class="post-list" id="blog-list"></ul>
+    </section>
+
+    <!-- ═══ POST VIEW ═══ -->
+    <div id="post-view" class="post-view">
+      <a href="#/blog" class="post-back">../blog</a>
+      <div class="post-header">
+        <h1 id="post-title"></h1>
+        <div class="post-meta">
+          <span id="post-date"></span>
+          <span id="post-tags"></span>
+        </div>
+      </div>
+      <details class="post-toc" open>
+        <summary>Table of Contents</summary>
+        <ol id="post-toc-list"></ol>
+      </details>
+      <div class="post-content" id="post-content"></div>
+    </div>
+
+    <!-- ═══ PROJECTS ═══ -->
+    <section id="page-projects" class="page-section">
+      <h2 class="section-title">Projects</h2>
+      <div class="project-grid" id="project-grid"></div>
+    </section>
+
+    <!-- ═══ ABOUT ═══ -->
+    <section id="page-about" class="page-section">
+      <h2 class="section-title">About</h2>
+      <div class="about-content">
+        <p>
+          Cybersecurity student and IT professional based in Denver, CO. Currently pursuing an
+          Associate of Applied Science in Cybersecurity at Community College of Denver, with a
+          B.S. in Cybersecurity &amp; Information Assurance at WGU starting May 2026.
+        </p>
+        <p>
+          I spend most of my time building out my homelab, breaking things to learn how they work,
+          and documenting the process. Interests include threat detection, network security,
+          infrastructure automation, and offensive security research.
+        </p>
+        <h3 style="font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent-dim); margin:1.5rem 0 0.75rem;">Certifications</h3>
+        <ul class="cert-list">
+          <li>CompTIA Security+</li>
+          <li>CompTIA Network+</li>
+          <li>NCA-AIIO</li>
+        </ul>
+        <h3 style="font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent-dim); margin:1.5rem 0 0.75rem;">Connect</h3>
+        <p>
+          <a href="https://github.com/0xDiyor" target="_blank" rel="noopener noreferrer">GitHub</a> &middot;
+          <a href="https://www.linkedin.com/in/diyor-r/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>0xDiyor</span>
+    </div>
+  </footer>
+
+  <!-- Marked.js for markdown rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+  <!-- DOMPurify for sanitizing rendered markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+
+  <script>
+    // ═══════════════════════════════════════════
+    // DATA — Edit these to manage your content
+    // ═══════════════════════════════════════════
+
+    const POSTS = [
+      {
+        slug: "hello-world",
+        title: "Hello World — Setting Up My Security Blog",
+        date: "2026-04-03",
+        tags: ["blog"],
+        description: "First post — why I built this site and what's coming next.",
+        file: "posts/hello-world.md"
+      },
+      {
+        slug: "homelab-proxmox-setup",
+        title: "Building a Cybersecurity Homelab with Proxmox",
+        date: "2026-04-01",
+        tags: ["homelab", "proxmox", "infrastructure"],
+        description: "Documenting my homelab architecture: Proxmox, pfSense, Suricata, Wazuh, and more.",
+        file: "posts/homelab-proxmox-setup.md"
+      }
+    ];
+
+    const PROJECTS = [
+      {
+        name: "Threat Intelligence Dashboard",
+        description: "React-based dashboard integrating VirusTotal and AbuseIPDB APIs for real-time threat monitoring. Dark terminal aesthetic with Recharts visualizations.",
+        tech: ["React", "Flask", "SQLite", "API Integration"],
+        github: "https://github.com/0xDiyor",
+        demo: null
+      },
+      {
+        name: "Homelab Infrastructure",
+        description: "Full security lab built on Proxmox — pfSense firewall, Suricata IDS, Wazuh SIEM, GNS3 network simulation. Segmented for safe attack simulation.",
+        tech: ["Proxmox", "pfSense", "Suricata", "Wazuh", "GNS3"],
+        github: "https://github.com/0xDiyor",
+        demo: null
+      },
+      {
+        name: "Intro to Programming Python",
+        description: "Repository of Python exercises and labs from CCD coursework — covering list comprehensions, dictionaries, string methods, and more.",
+        tech: ["Python"],
+        github: "https://github.com/0xDiyor/Intro-to-Programming-Python",
+        demo: null
+      }
+    ];
+
+    // ═══════════════════════════════════════════
+    // SECURITY HELPERS
+    // ═══════════════════════════════════════════
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // ═══════════════════════════════════════════
+    // ROUTER
+    // ═══════════════════════════════════════════
+
+    function getRoute() {
+      const hash = window.location.hash || '#/';
+      // Sanitize: only allow alphanumeric, hyphens, slashes
+      const raw = hash.replace('#', '');
+      return raw.replace(/[^a-zA-Z0-9\-\/]/g, '');
+    }
+
+    function navigate() {
+      const route = getRoute();
+      const sections = document.querySelectorAll('.page-section');
+      const postView = document.getElementById('post-view');
+      const navLinks = document.querySelectorAll('.nav-links a');
+
+      // Hide everything
+      sections.forEach(s => { s.classList.remove('active'); s.style.animation = 'none'; });
+      postView.classList.remove('active');
+
+      // Reset nav
+      navLinks.forEach(a => a.classList.remove('active'));
+
+      if (route.startsWith('/post/')) {
+        const slug = route.replace('/post/', '');
+        loadPost(slug);
+        document.querySelector('[data-nav="blog"]')?.classList.add('active');
+      } else {
+        let page = route.replace('/', '') || 'home';
+        // Whitelist valid pages
+        const validPages = ['home', 'blog', 'projects', 'about'];
+        if (!validPages.includes(page)) page = 'home';
+
+        const section = document.getElementById('page-' + page);
+        if (section) {
+          section.style.animation = '';
+          section.classList.add('active');
+        }
+        document.querySelector(`[data-nav="${page}"]`)?.classList.add('active');
+        document.title = '0xDiyor' + (page !== 'home' ? ' — ' + page.charAt(0).toUpperCase() + page.slice(1) : '');
+      }
+
+      window.scrollTo(0, 0);
+    }
+
+    // ═══════════════════════════════════════════
+    // RENDER FUNCTIONS
+    // ═══════════════════════════════════════════
+
+    function renderPostItem(post) {
+      const tags = post.tags.map(t => `<span class="post-tag">${escapeHtml(t)}</span>`).join('');
+      return `
+        <li class="post-item">
+          <a href="#/post/${escapeHtml(post.slug)}" class="post-link">${escapeHtml(post.title)}</a>
+          <div class="post-meta">
+            <span>${formatDate(post.date)}</span>
+            ${tags}
+          </div>
+          ${post.description ? `<p class="post-description">${escapeHtml(post.description)}</p>` : ''}
+        </li>
+      `;
+    }
+
+    function formatDate(dateStr) {
+      const d = new Date(dateStr + 'T00:00:00');
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    function renderPosts() {
+      const sorted = [...POSTS].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      // Full list
+      document.getElementById('blog-list').innerHTML =
+        sorted.length ? sorted.map(renderPostItem).join('') :
+        '<div class="empty-state">No posts yet. Add markdown files to /posts and update the POSTS array.</div>';
+
+      // Recent (top 3)
+      document.getElementById('recent-posts').innerHTML =
+        sorted.slice(0, 3).map(renderPostItem).join('');
+    }
+
+    function renderProjectCard(p) {
+      const url = escapeHtml(p.github || p.demo || '#');
+      return `
+        <a href="${url}" target="_blank" rel="noopener noreferrer" class="project-card">
+          <div class="project-name">${escapeHtml(p.name)}</div>
+          <p class="project-desc">${escapeHtml(p.description)}</p>
+          <div class="project-tech">
+            ${p.tech.map(t => `<span>${escapeHtml(t)}</span>`).join('')}
+          </div>
+        </a>
+      `;
+    }
+
+    function renderProjects() {
+      // Full list
+      document.getElementById('project-grid').innerHTML = PROJECTS.map(renderProjectCard).join('');
+
+      // Recent (top 3) on home
+      document.getElementById('recent-projects').innerHTML = PROJECTS.slice(0, 3).map(renderProjectCard).join('');
+    }
+    // ═══════════════════════════════════════════
+    // POST LOADING (Markdown)
+    // ═══════════════════════════════════════════
+
+    async function loadPost(slug) {
+      const post = POSTS.find(p => p.slug === slug);
+      if (!post) {
+        document.getElementById('post-content').innerHTML = '<div class="empty-state">Post not found.</div>';
+        document.getElementById('post-view').classList.add('active');
+        return;
+      }
+
+      document.getElementById('post-title').textContent = post.title;
+      document.getElementById('post-date').textContent = formatDate(post.date);
+      document.getElementById('post-tags').innerHTML = post.tags.map(t => `<span class="post-tag">${escapeHtml(t)}</span>`).join('');
+
+      try {
+        const res = await fetch(post.file);
+        if (!res.ok) throw new Error('Failed to fetch');
+        const md = await res.text();
+
+        // Configure marked
+        marked.setOptions({
+          breaks: true,
+          gfm: true,
+        });
+
+        // Parse and sanitize markdown
+        const rawHtml = marked.parse(md);
+        const cleanHtml = DOMPurify.sanitize(rawHtml, {
+          ALLOWED_TAGS: ['h1','h2','h3','h4','h5','h6','p','a','ul','ol','li','code','pre','blockquote','img','em','strong','del','br','hr','table','thead','tbody','tr','th','td','sup','sub','details','summary'],
+          ALLOWED_ATTR: ['href','src','alt','title','class','id','target','rel'],
+        });
+        document.getElementById('post-content').innerHTML = cleanHtml;
+
+        // Generate TOC from h2s
+        const headings = document.querySelectorAll('#post-content h2');
+        const tocList = document.getElementById('post-toc-list');
+        tocList.innerHTML = '';
+
+        headings.forEach((h, i) => {
+          const id = 'heading-' + i;
+          h.id = id;
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.href = '#' + id;
+          a.textContent = h.textContent;
+          a.addEventListener('click', (e) => {
+            e.preventDefault();
+            h.scrollIntoView({ behavior: 'smooth' });
+          });
+          li.appendChild(a);
+          tocList.appendChild(li);
+        });
+
+        if (headings.length === 0) {
+          document.querySelector('.post-toc').style.display = 'none';
+        } else {
+          document.querySelector('.post-toc').style.display = '';
+        }
+
+      } catch (err) {
+        document.getElementById('post-content').innerHTML =
+          `<div class="empty-state">Could not load post.<br><br>Make sure the file <code>${escapeHtml(post.file)}</code> exists in your repository.</div>`;
+        document.getElementById('post-toc-list').innerHTML = '';
+      }
+
+      document.getElementById('post-view').classList.add('active');
+      document.title = `${post.title} — 0xDiyor`;
+    }
+
+    // ═══════════════════════════════════════════
+    // INIT
+    // ═══════════════════════════════════════════
+
+    renderPosts();
+    renderProjects();
+
+    window.addEventListener('hashchange', navigate);
+    navigate();
+
+    // ═══════════════════════════════════════════
+    // ANIMATED ASCII BACKGROUND
+    // ═══════════════════════════════════════════
+
+    (function() {
+      const canvas = document.getElementById('ascii-bg');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      // Character sets — cyber / hacker aesthetic (canvas-safe only)
+      const charSets = [
+        '01',
+        '{}[]()<>',
+        '0123456789ABCDEF',
+        '.:;+*=#@%',
+        '$/\\|~^&!?',
+        '-_',
+      ];
+      const allChars = charSets.join('');
+
+      let cols, rows, cellW, cellH;
+      let animId;
+      let isVisible = true;
+      const isMobile = window.innerWidth < 600;
+      let frameCount = 0;
+
+      function resize() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        canvas.style.width = rect.width + 'px';
+        canvas.style.height = rect.height + 'px';
+        ctx.scale(dpr, dpr);
+
+        // Calculate grid
+        const fontSize = Math.max(10, Math.min(14, rect.width / 60));
+        ctx.font = fontSize + 'px "JetBrains Mono", monospace';
+        cellW = fontSize * 0.62;
+        cellH = fontSize * 1.35;
+        cols = Math.ceil(rect.width / cellW);
+        rows = Math.ceil(rect.height / cellH);
+      }
+
+      function draw(t) {
+        if (!isVisible) { animId = requestAnimationFrame(draw); return; }
+
+        // Skip every other frame on mobile for battery
+        frameCount++;
+        if (isMobile && frameCount % 2 !== 0) { animId = requestAnimationFrame(draw); return; }
+
+        const rect = canvas.parentElement.getBoundingClientRect();
+        const w = rect.width;
+        const h = rect.height;
+
+        ctx.clearRect(0, 0, w, h);
+
+        const time = t * 0.001;
+
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < cols; col++) {
+            const x = col * cellW;
+            const y = row * cellH + cellH;
+
+            // Normalized coordinates
+            const nx = col / cols;
+            const ny = row / rows;
+
+            // Layered wave pattern
+            const wave1 = Math.sin(nx * 4.0 + time * 0.7) * Math.cos(ny * 3.0 + time * 0.5);
+            const wave2 = Math.sin((nx + ny) * 3.0 - time * 0.4);
+            const wave3 = Math.cos(nx * 2.0 - time * 0.3) * Math.sin(ny * 5.0 + time * 0.6);
+            const combined = (wave1 + wave2 + wave3) / 3.0;
+
+            // Distance from center for vignette
+            const dx = nx - 0.5;
+            const dy = ny - 0.5;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const vignette = 1.0 - Math.min(1.0, dist * 1.4);
+
+            // Brightness based on wave + vignette
+            const brightness = (combined * 0.5 + 0.5) * vignette;
+
+            // Only draw if above threshold — creates sparse feel
+            if (brightness < 0.15) continue;
+
+            // Character selection — shifts over time
+            const charIndex = Math.floor(
+              (Math.sin(nx * 7 + ny * 11 + time * 0.8) * 0.5 + 0.5) * allChars.length
+            ) % allChars.length;
+            const char = allChars[charIndex];
+
+            // Color: accent green with varying alpha
+            const alpha = brightness * 0.4;
+            const g = Math.floor(180 + brightness * 49);
+            ctx.fillStyle = `rgba(0, ${g}, ${Math.floor(100 + brightness * 60)}, ${alpha})`;
+            ctx.fillText(char, x, y);
+          }
+        }
+
+        animId = requestAnimationFrame(draw);
+      }
+
+      // Visibility — pause when not on home page, tab hidden, or scrolled past
+      let bannerInView = true;
+
+      function checkVisibility() {
+        const homeActive = document.getElementById('page-home')?.classList.contains('active');
+        isVisible = homeActive && !document.hidden && bannerInView;
+      }
+
+      // IntersectionObserver to detect if banner is in viewport
+      const bannerEl = canvas.parentElement;
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          bannerInView = entries[0].isIntersecting;
+          checkVisibility();
+        }, { threshold: 0 });
+        io.observe(bannerEl);
+      }
+
+      // Observe route changes
+      const observer = new MutationObserver(checkVisibility);
+      const homeSection = document.getElementById('page-home');
+      if (homeSection) {
+        observer.observe(homeSection, { attributes: true, attributeFilter: ['class'] });
+      }
+      document.addEventListener('visibilitychange', checkVisibility);
+
+      // Init
+      resize();
+      checkVisibility();
+      animId = requestAnimationFrame(draw);
+
+      // Debounced resize
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          resize();
+        }, 100);
+      });
+    })();
+  </script>
+
+</body>
+</html>
