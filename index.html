@@ -688,6 +688,7 @@
     const PROJECTS = [
       {
         name: "Threat Intelligence Dashboard",
+        date: "2026-04-01",
         description: "React-based dashboard integrating VirusTotal and AbuseIPDB APIs for real-time threat monitoring. Dark terminal aesthetic with Recharts visualizations.",
         tech: ["React", "Flask", "SQLite", "API Integration"],
         github: "https://github.com/0xDiyor",
@@ -695,6 +696,7 @@
       },
       {
         name: "Homelab Infrastructure",
+        date: "2026-03-01",
         description: "Full security lab built on Proxmox — pfSense firewall, Suricata IDS, Wazuh SIEM, GNS3 network simulation. Segmented for safe attack simulation.",
         tech: ["Proxmox", "pfSense", "Suricata", "Wazuh", "GNS3"],
         github: "https://github.com/0xDiyor",
@@ -702,6 +704,7 @@
       },
       {
         name: "Intro to Programming Python",
+        date: "2026-02-01",
         description: "Repository of Python exercises and labs from CCD coursework — covering list comprehensions, dictionaries, string methods, and more.",
         tech: ["Python"],
         github: "https://github.com/0xDiyor/Intro-to-Programming-Python",
@@ -815,11 +818,13 @@
     }
 
     function renderProjects() {
+      const sorted = [...PROJECTS].sort((a, b) => new Date(b.date) - new Date(a.date));
+
       // Full list
-      document.getElementById('project-grid').innerHTML = PROJECTS.map(renderProjectCard).join('');
+      document.getElementById('project-grid').innerHTML = sorted.map(renderProjectCard).join('');
 
       // Recent (top 3) on home
-      document.getElementById('recent-projects').innerHTML = PROJECTS.slice(0, 3).map(renderProjectCard).join('');
+      document.getElementById('recent-projects').innerHTML = sorted.slice(0, 3).map(renderProjectCard).join('');
     }
     // ═══════════════════════════════════════════
     // POST LOADING (Markdown)
