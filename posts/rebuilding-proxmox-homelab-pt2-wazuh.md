@@ -1,53 +1,38 @@
-## Overview
+## Goal
 
-Installing and configuring **Wazuh** on my Proxmox homelab. Wazuh will serve as my SIEM, giving me visibility into what's happening across the VMs running on the host.
+To install and configure Wazuh on my proxmox homelab
 
-I started by reading through the official [Wazuh documentation](https://documentation.wazuh.com) to get familiar with the architecture before touching anything.
+I first started by visiting the official documentation for wazuh to get myself familiar.
 
-![Wazuh documentation overview](../assets/images/wazuh-pt2-documentation.png)
+![Wazuh Documentation](../assets/images/wazuh-pt2-documentation.png)
 
-*Wazuh documentation — reading this first before installing anything*
+There are four components to the Wazuh system. Wazuh Indexer, Wazuh Server, Wazuh Dashboard, and Wazuh Agent
 
-## Wazuh Architecture
+- Wazuh Indexer stores data as JSON documents "Each document correlates a set of keys, field names, or properties with their corresponding values, which can be strings, numbers, Boolean values, dates, arrays of values, geolocations, or other types of data."
+- The Indexer is very low latency and allows for near real time analysis
+- The Wazuh server is the central component responsible for analyzing data collected from Wazuh agents and agentless devices. It detects threats, anomalies, and regulatory compliance violations in real time, generating alerts when suspicious activity is identified. Beyond detection, the Wazuh server enables centralized management by remotely configuring Wazuh agents and continuously monitoring their operational status.
 
-There are four core components to the Wazuh system: **Wazuh Indexer**, **Wazuh Server**, **Wazuh Dashboard**, and **Wazuh Agent**.
+Below is a diagram of the Wazuh Server Architechture
 
-- **Wazuh Indexer** stores data as JSON documents. Each document maps field names to values — strings, numbers, Booleans, dates, arrays, and more. It's designed for near real-time analysis with very low latency.
-- **Wazuh Server** is the central component. It analyzes data collected from Wazuh agents and agentless devices, detecting threats, anomalies, and compliance violations in real time. It also handles centralized agent management and monitors their operational status.
-- **Wazuh Dashboard** is the web UI for visualizing alerts, events, and agent status.
-- **Wazuh Agent** runs on monitored endpoints and ships data back to the server.
+![Wazuh Server Architecture](../assets/images/wazuh-pt2-server-architecture.png)
 
-![Wazuh server architecture diagram](../assets/images/wazuh-pt2-server-architecture.png)
+Below is a diagram of the Wazuh Agent Architecture
 
-*Wazuh server architecture*
+![Wazuh Agent Architecture](../assets/images/wazuh-pt2-agent-architecture.png)
 
-![Wazuh agent architecture diagram](../assets/images/wazuh-pt2-agent-architecture.png)
+I'll be deploying Wazuh server, Wazuh indexer, and the Wazuh dashboard on the same host as a distributed deployment would be way too overkill for my use case.
 
-*Wazuh agent architecture*
+I then downloaded Ubuntu 24.04 LTS, as it's the newest version of Ubuntu that Wazuh officialy supports. I then proceeded to add the ISO image to my proxmox, and configure the VM as shown below:
 
-For my setup, I'll be running the Wazuh server, indexer, and dashboard on the same host. A distributed deployment would be overkill for a homelab.
+![Wazuh Ubuntu Install](../assets/images/wazuh-pt2-ubuntu-vm-config.png)
 
-## Setting Up the Wazuh VM
+During the Ubuntu Server Install, I set a DHCP reservation in my Xfinity Gateway interface and then assigned it a static ip within the installer:
 
-I downloaded **Ubuntu 24.04 LTS** — the newest Ubuntu release that Wazuh officially supports at the time of writing. I added the ISO to Proxmox and configured the VM as follows:
+![Ubuntu Server Static IP](../assets/images/wazuh-pt2-ubuntu-static-ip.png)
 
-![Proxmox VM configuration for Wazuh Ubuntu install](../assets/images/wazuh-pt2-ubuntu-vm-config.png)
+![Ubuntu System Install](../assets/images/wazuh-pt2-ubuntu-system-install.png)
 
-*VM configuration in Proxmox before starting the Ubuntu installer*
-
-During the Ubuntu Server installer, I set a DHCP reservation in the Xfinity Gateway admin panel and then assigned it a static IP within the installer itself.
-
-![Ubuntu server static IP configuration](../assets/images/wazuh-pt2-ubuntu-static-ip.png)
-
-*Static IP configured during the Ubuntu Server install*
-
-![Ubuntu system install confirmation](../assets/images/wazuh-pt2-ubuntu-system-install.png)
-
-*Ubuntu Server install completing successfully*
-
-### Fixing LVM to Use the Full Disk
-
-After the install, I noticed Ubuntu wasn't using the full 100GB I'd allocated — LVM only claimed a portion of it by default. I SSH'd from my MacBook and ran the following to expand the logical volume to use all available space:
+After successfully installing Ubuntu, I realized that the 100GB's of drive space I allocated was not being used fully by LVM. I ssh'ed from my macbook and then ran these following commands to fix the LVM to use the entirety of the drive.
 
 ```bash
 sudo lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
@@ -55,49 +40,34 @@ sudo resize2fs /dev/ubuntu-vg/ubuntu-lv
 df -h /
 ```
 
-![SSH session fixing the LVM issue](../assets/images/wazuh-pt2-lvm-fix.png)
+![SSH to fix LVM Issue](../assets/images/wazuh-pt2-lvm-fix.png)
 
-*Extending the LVM logical volume to use the full allocated disk*
-
-## Installing Wazuh
-
-With Ubuntu prepped, I ran a quick `sudo apt update && sudo apt upgrade` to get everything current, then used the Wazuh installation assistant to deploy the full stack in one shot:
+I then ran a quick sudo apt update and upgrade to ensure Ubuntu was up to date and then ran a curl command to install the Wazuh Installation assistant
 
 ```bash
 curl -sO https://packages.wazuh.com/4.14/wazuh-install.sh && sudo bash ./wazuh-install.sh -a
 ```
 
-The `-a` flag installs all components — indexer, server, and dashboard — on the same node. After it finished, I pulled up the web dashboard for the first time.
+After successfully installing, I managed to access the web dashboard for the first time!
 
-![Wazuh dashboard on first boot](../assets/images/wazuh-pt2-first-boot.png)
+![Wazuh First Boot](../assets/images/wazuh-pt2-first-boot.png)
 
-*Wazuh dashboard loading successfully after the all-in-one install*
+Now it's time to create some vms and set up Wazuh Agents within them.
 
-## Deploying a Wazuh Agent
+I created a Ubuntu 26.04 Desktop VM, to serve as my first VM I can deploy my Wazuh Agent onto it.
 
-With the server up, I created a **Ubuntu 24.04 Desktop VM** as my first managed endpoint to deploy a Wazuh agent onto.
+![Ubuntu Desktop VM Confirmation](../assets/images/wazuh-pt2-desktop-vm.png)
 
-![Ubuntu Desktop VM confirmation in Proxmox](../assets/images/wazuh-pt2-desktop-vm.png)
+After going through the Ubuntu Installer, setting a static IP, and enabling SSH for ease of access, I installed the Wazuh Agent onto it.
 
-*Ubuntu Desktop VM created and running in Proxmox*
+![Wazuh Agent Installation](../assets/images/wazuh-pt2-agent-install.png)
 
-After going through the Ubuntu installer, setting a static IP, and enabling SSH, I installed the Wazuh agent. I SSH'd from my Mac terminal to make copying the `wget` install commands easier, then enabled the agent via `systemctl`:
+I then SSH'ed via my mac terminal so I can easily copy and paste the wget commands to install the agent. I then ran systemctl to enable the agent. I returned back to the Wazuh Dashboard and it was successfully working!
 
-![Wazuh agent installation in progress](../assets/images/wazuh-pt2-agent-install.png)
+![Wazuh Agent](../assets/images/wazuh-pt2-agent-dashboard.png)
 
-*Installing the Wazuh agent on the Ubuntu Desktop VM*
-
-Back in the Wazuh Dashboard, the agent showed up as active immediately.
-
-![Wazuh dashboard showing active agent](../assets/images/wazuh-pt2-agent-dashboard.png)
-
-*Wazuh agent visible and active in the dashboard*
-
-## What's Next
-
-The core stack is deployed and the first agent is reporting in. In Part 3, I'll go deeper into the Wazuh configuration — custom rulesets, alert tuning, and getting meaningful signal out of the SIEM instead of just noise.
+In part 3, I'll go deeper into the configs and rulesets for Wazuh!
 
 ## References
 
-- [Wazuh official documentation](https://documentation.wazuh.com)
-- [Wazuh installation assistant](https://documentation.wazuh.com/current/installation-guide/wazuh-indexer/index.html)
+- [Wazuh Website](https://wazuh.com)
