@@ -1,0 +1,43 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PostItem from '../components/PostItem.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { sortedProjects } from '../data/projects';
+
+const posts = (await getCollection('blog'))
+  .sort((a, b) => +b.data.date - +a.data.date)
+  .slice(0, 3);
+const projects = sortedProjects().slice(0, 3);
+---
+
+<Base>
+  <div class="ascii-banner">
+    <pre class="ascii-art">
+  ___       ____  _____   _____  ____
+ / _ \__  _|  _ \_ _\ \ / / _ \|  _ \
+| | | \ \/ / | | | | \ V / | | | |_) |
+| |_| |&gt;  &lt;| |_| | |  | || |_| |  _ &lt;
+ \___//_/\_\____/___| |_| \___/|_| \_\</pre>
+    <p class="banner-sub">cybersecurity &middot; homelabbing &middot; writeups</p>
+    <div class="banner-links">
+      <a href="https://github.com/0xDiyor" target="_blank" rel="noopener noreferrer">github</a>
+      <a href="https://www.linkedin.com/in/diyor-r/" target="_blank" rel="noopener noreferrer">linkedin</a>
+      <a href="/blog/">blog</a>
+    </div>
+  </div>
+
+  <div class="home-section">
+    <h2 class="section-title">Recent Posts</h2>
+    <ul class="post-list">
+      {posts.map((post) => <PostItem post={post} />)}
+    </ul>
+  </div>
+
+  <div class="home-section">
+    <h2 class="section-title">Recent Projects</h2>
+    <div class="project-grid">
+      {projects.map((project) => <ProjectCard project={project} />)}
+    </div>
+  </div>
+</Base>

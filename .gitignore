@@ -1,2 +1,15 @@
-# Claude Code guidelines — local only, not for the public repo
+# Local notes, not for the public repo
 CLAUDE.md
+
+# Astro build output and caches
+dist/
+.astro/
+
+# Dependencies
+node_modules/
+
+# macOS
+.DS_Store
+
+# Logs
+npm-debug.log*

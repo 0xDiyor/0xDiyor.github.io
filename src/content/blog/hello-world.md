@@ -1,3 +1,9 @@
+---
+title: "Hello World — Setting Up My Security Blog"
+date: 2026-04-03
+tags: ["blog"]
+description: "First post — why I built this site and what's coming next."
+---
 ## Why This Site Exists
 
 I built this site to document my journey into cybersecurity — the things I'm learning, the projects I'm building, and the writeups from challenges and labs I work through.

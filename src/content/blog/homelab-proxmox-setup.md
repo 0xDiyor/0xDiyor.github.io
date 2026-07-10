@@ -1,3 +1,9 @@
+---
+title: "Building a Cybersecurity Homelab with Proxmox"
+date: 2026-04-01
+tags: ["homelab", "proxmox", "infrastructure"]
+description: "Documenting my homelab architecture: Proxmox, pfSense, Suricata, Wazuh, and more."
+---
 ## Overview
 
 This post documents the architecture and setup of my cybersecurity homelab — built for learning threat detection, network security, and offensive security in a controlled environment.

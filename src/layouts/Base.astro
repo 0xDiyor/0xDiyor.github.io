@@ -1,0 +1,77 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = '0xDiyor',
+  description = 'Cybersecurity portfolio, projects, and writeups by 0xDiyor',
+} = Astro.props;
+
+const path = Astro.url.pathname;
+const navItems = [
+  { href: '/', label: 'home' },
+  { href: '/blog/', label: 'blog' },
+  { href: '/projects/', label: 'projects' },
+  { href: '/about/', label: 'about' },
+];
+// Home is active only on exact match; others match any sub-path (e.g. /blog/post-slug/)
+const isActive = (href: string) =>
+  href === '/' ? path === '/' : path.startsWith(href);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0a0a0f" />
+    <meta name="color-scheme" content="dark" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={new URL(path, Astro.site)} />
+    <meta property="og:image" content={new URL('/favicon.svg', Astro.site)} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href={new URL(path, Astro.site)} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="application/rss+xml" title="0xDiyor" href="/rss.xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav class="site-nav">
+      <div class="container nav-inner">
+        <ul class="nav-links">
+          {navItems.map((item) => (
+            <li>
+              <a href={item.href} class={isActive(item.href) ? 'active' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </nav>
+
+    <main class="container">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <span>0xDiyor</span>
+      </div>
+    </footer>
+  </body>
+</html>

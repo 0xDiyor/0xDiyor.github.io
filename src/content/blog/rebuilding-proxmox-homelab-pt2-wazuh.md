@@ -1,10 +1,16 @@
+---
+title: "Rebuilding My Proxmox Homelab from Scratch — Part 2: Wazuh SIEM"
+date: 2026-04-28
+tags: ["homelab", "proxmox", "security", "wazuh"]
+description: "Installing Wazuh on Ubuntu 24.04 in a Proxmox VM — all-in-one server/indexer/dashboard deployment and first agent enrollment."
+---
 After getting Tailscale running in part 1, the next thing I wanted was a robust SIEM solution to play around with. So the next step was deploying Wazuh.
 
 ## Understanding Wazuh
 
 Before I touched anything, I went straight to the official documentation to actually understand what I was deploying. I've made the mistake before of just following a guide without knowing what each piece does, and it always comes back to bite me.
 
-![Wazuh Documentation](../assets/images/wazuh-pt2-documentation.png)
+![Wazuh Documentation](../../assets/images/wazuh-pt2-documentation.png)
 *The Wazuh official documentation. I started here before doing anything else. The architecture section lays out all four components and how they relate to each other.*
 
 There are four components to the Wazuh stack:
@@ -19,12 +25,12 @@ There are four components to the Wazuh stack:
 
 The server architecture looks like this:
 
-![Wazuh Server Architecture](../assets/images/wazuh-pt2-server-architecture.png)
+![Wazuh Server Architecture](../../assets/images/wazuh-pt2-server-architecture.png)
 *Wazuh Server architecture from the official docs. The manager sits at the center, handling agent communication via port 1514. The Wazuh Indexer stores and indexes the processed events.*
 
 And the agent side:
 
-![Wazuh Agent Architecture](../assets/images/wazuh-pt2-agent-architecture.png)
+![Wazuh Agent Architecture](../../assets/images/wazuh-pt2-agent-architecture.png)
 *Wazuh Agent architecture. The agent runs several modules in parallel including the log collector, file integrity monitor, rootcheck, and the syscollector. Everything funnels through the agent daemon which handles communication back to the server.*
 
 For my homelab, I went with an all-in-one deployment. Wazuh Server, Indexer, and Dashboard all on the same host. A distributed deployment would be overkill for what I'm doing here.
@@ -33,15 +39,15 @@ For my homelab, I went with an all-in-one deployment. Wazuh Server, Indexer, and
 
 The first thing I needed was a VM. Wazuh officially supports Ubuntu 24.04 LTS, so that's what I went with. I downloaded the ISO, added it to Proxmox, and configured the VM.
 
-![Wazuh Ubuntu Install](../assets/images/wazuh-pt2-ubuntu-vm-config.png)
+![Wazuh Ubuntu Install](../../assets/images/wazuh-pt2-ubuntu-vm-config.png)
 *Proxmox VM configuration for the Wazuh host. 4 cores, 8GB RAM, 100GB disk on local-zfs. Ubuntu 24.04 LTS ISO attached and ready to boot.*
 
 During the Ubuntu Server install, I set a DHCP reservation in my Xfinity gateway admin interface first, then assigned it as a static IP inside the Ubuntu installer. I learned from part 1 that skipping the static IP during install and trying to fix it after is just unnecessary pain.
 
-![Ubuntu Server Static IP](../assets/images/wazuh-pt2-ubuntu-static-ip.png)
+![Ubuntu Server Static IP](../../assets/images/wazuh-pt2-ubuntu-static-ip.png)
 *Ubuntu Server network configuration screen during install. Manually setting the static IP, subnet mask, gateway, and DNS. Did this right the first time this go around.*
 
-![Ubuntu System Install](../assets/images/wazuh-pt2-ubuntu-system-install.png)
+![Ubuntu System Install](../../assets/images/wazuh-pt2-ubuntu-system-install.png)
 *Ubuntu Server 24.04 LTS installation in progress. Profile setup, SSH enabled, no extra snaps selected.*
 
 ## The LVM Problem
@@ -56,7 +62,7 @@ sudo resize2fs /dev/ubuntu-vg/ubuntu-lv
 df -h /
 ```
 
-![SSH to fix LVM Issue](../assets/images/wazuh-pt2-lvm-fix.png)
+![SSH to fix LVM Issue](../../assets/images/wazuh-pt2-lvm-fix.png)
 *SSH session from my MacBook into the Wazuh VM. Running lvextend to claim the remaining unallocated space on the LVM, then resize2fs to grow the filesystem to fill it. The final df -h confirms the full ~98GB is now available on /.*
 
 `lvextend -l +100%FREE` tells LVM to grab all remaining free space in the volume group. `resize2fs` then tells the ext4 filesystem to expand into that newly claimed space. After that, `df -h` confirmed the full drive was showing up. Good to go.
@@ -73,7 +79,7 @@ The `-a` flag deploys the all-in-one stack, which is exactly what I wanted. The 
 
 Then I opened a browser and went to `https://<wazuh-vm-ip>`.
 
-![Wazuh First Boot](../assets/images/wazuh-pt2-first-boot.png)
+![Wazuh First Boot](../../assets/images/wazuh-pt2-first-boot.png)
 *First successful login to the Wazuh web dashboard. The overview page is empty since no agents are connected yet.*
 
 And just like that, Wazuh was up!
@@ -82,14 +88,14 @@ And just like that, Wazuh was up!
 
 A SIEM with no agents connected isn't doing anything. The next step was spinning up a VM to monitor. I created an Ubuntu 26.04 Desktop VM to use as my first monitored endpoint.
 
-![Ubuntu Desktop VM Confirmation](../assets/images/wazuh-pt2-desktop-vm.png)
+![Ubuntu Desktop VM Confirmation](../../assets/images/wazuh-pt2-desktop-vm.png)
 *Proxmox VM summary page for the Ubuntu 26.04 Desktop VM before first boot. 2 cores, 6GB RAM, 50GB disk. This will be the first agent target.*
 
 After going through the Ubuntu installer, setting a static IP, and enabling SSH, it was time to install the agent. I SSH'd from my Mac so I could easily copy the commands in without typos.
 
 The Wazuh Dashboard has a built-in agent enrollment flow that generates the exact commands you need. I ran those on the Desktop VM:
 
-![Wazuh Agent Installation](../assets/images/wazuh-pt2-agent-install.png)
+![Wazuh Agent Installation](../../assets/images/wazuh-pt2-agent-install.png)
 *SSH terminal session on the Ubuntu Desktop VM. Running the wget command to pull the Wazuh agent package, then dpkg to install it, then setting the WAZUH_MANAGER environment variable to point at the server IP before enabling and starting the service.*
 
 Then I enabled and started the agent service:
@@ -102,7 +108,7 @@ sudo systemctl start wazuh-agent
 
 Flipped back to the Wazuh Dashboard and within about 30 seconds:
 
-![Wazuh Agent](../assets/images/wazuh-pt2-agent-dashboard.png)
+![Wazuh Agent](../../assets/images/wazuh-pt2-agent-dashboard.png)
 *Wazuh Dashboard Agents page showing the Ubuntu Desktop VM as Active with a green status indicator.*
 
 Agent is live. Wazuh is collecting.

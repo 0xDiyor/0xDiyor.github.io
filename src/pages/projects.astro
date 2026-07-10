@@ -1,0 +1,14 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { sortedProjects } from '../data/projects';
+
+const projects = sortedProjects();
+---
+
+<Base title="0xDiyor — Projects">
+  <h2 class="section-title">Projects</h2>
+  <div class="project-grid">
+    {projects.map((project) => <ProjectCard project={project} />)}
+  </div>
+</Base>

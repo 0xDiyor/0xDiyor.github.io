@@ -1,3 +1,9 @@
+---
+title: "Rebuilding My Proxmox Homelab from Scratch — Part 1: Base Install and Tailscale"
+date: 2026-04-22
+tags: ["homelab", "proxmox", "networking"]
+description: "Documenting a full Proxmox rebuild on a Minisforum 790 Pro — ZFS setup, static IP reservation, and Tailscale in an unprivileged LXC with TUN access."
+---
 ## Context
 
 I've finally decided to do a full rebuild of my Proxmox homelab on my Minisforum 790 Pro mini PC (Ryzen 7940HS, 32GB DDR5, 2TB NVMe SSD). My previous implementations were a lot more disorganized in the way I set things up, so this time around I wanted to clearly and precisely configure things. And honestly, I needed a refresher on configuring Proxmox from scratch again.
@@ -8,7 +14,7 @@ I've finally decided to do a full rebuild of my Proxmox homelab on my Minisforum
 
 First, I flashed the latest **Proxmox VE** ISO to a 32GB USB with **Rufus**. Before booting the installer, I went into the BIOS of my mini PC and dropped the VRAM/UMA Buffer from 12GB down to 1GB, as I had it set up previously to run local AI models. Since I'm not gonna be running any GPU workloads on the iGPU itself (I have a spare RTX 3060 12GB I can pass through later for accelerated tasks), that memory is more useful returned to the system pool.
 
-![BIOS VRAM setting dropped to 1GB](../assets/images/proxmox-pt1-bios-vram.jpeg)
+![BIOS VRAM setting dropped to 1GB](../../assets/images/proxmox-pt1-bios-vram.jpeg)
 
 *VRAM/UMA Buffer reduced from 12GB to 1GB before install*
 
@@ -16,13 +22,13 @@ For storage, I chose **ZFS** over LVM. With a single drive there's no redundancy
 
 I then set a static IP via a DHCP reservation in the Xfinity gateway admin panel before I completed the installer. My previous time setting up Proxmox, I did not set a static IP initially and relied on DHCP, which caused way more headaches than I needed.
 
-![DHCP reservation configured in the Xfinity gateway admin interface](../assets/images/proxmox-pt1-dhcp-reservation.png)
+![DHCP reservation configured in the Xfinity gateway admin interface](../../assets/images/proxmox-pt1-dhcp-reservation.png)
 
 *DHCP reservation configured in the Xfinity gateway admin interface*
 
 And just like that, I successfully did a fresh install!
 
-![First successful Proxmox boot](../assets/images/proxmox-pt1-first-boot.png)
+![First successful Proxmox boot](../../assets/images/proxmox-pt1-first-boot.png)
 
 *First successful Proxmox boot — web UI accessible on the local network*
 
@@ -34,7 +40,7 @@ Once the web GUI was up, I ran the community PVE post install script. It disable
 bash -c "$(wget -qLO - https://github.com/community-scripts/ProxmoxVE/raw/main/misc/post-pve-install.sh)"
 ```
 
-![PVE post install script running](../assets/images/proxmox-pt1-post-install-script.png)
+![PVE post install script running](../../assets/images/proxmox-pt1-post-install-script.png)
 
 *I used Techno Tim's walkthrough alongside the community scripts docs as a guide.*
 
@@ -44,7 +50,7 @@ This was the meatiest section and the one I looked forward to the most to set up
 
 I followed a great YouTube video from **Tailscale** explaining how to set up their product in Proxmox. I downloaded a Debian 13 template from the Proxmox template repository and created an unprivileged LXC container with a CT ID of 100. Below are the metrics of my LXC container (super lightweight):
 
-![LXC container summary — CPU, memory, and disk allocation](../assets/images/proxmox-pt1-lxc-summary.png)
+![LXC container summary — CPU, memory, and disk allocation](../../assets/images/proxmox-pt1-lxc-summary.png)
 
 *LXC container summary — CT ID 100, Debian 13, minimal resource allocation*
 
@@ -81,13 +87,13 @@ tailscale up --accept-routes --advertise-routes=10.0.0.0/24 --ssh
 
 In the Tailscale admin panel at `login.tailscale.com/admin/machines`, I approved the advertised route under Edit route settings and disabled key expiry on the container node so it doesn't drop off the tailnet after 180 days.
 
-![Tailscale connectivity confirmed with the subnet router active](../assets/images/proxmox-pt1-tailscale-connected.png)
+![Tailscale connectivity confirmed with the subnet router active](../../assets/images/proxmox-pt1-tailscale-connected.png)
 
 *Tailscale connectivity confirmed with the subnet router active*
 
 ## Things I Found Interesting
 
-![Diagram showing how the TUN device interfaces with the kernel](../assets/images/proxmox-pt1-tun-diagram.png)
+![Diagram showing how the TUN device interfaces with the kernel](../../assets/images/proxmox-pt1-tun-diagram.png)
 
 *Diagram showing how the TUN device interfaces with the kernel — useful context for what the cgroup entries are actually granting*
 

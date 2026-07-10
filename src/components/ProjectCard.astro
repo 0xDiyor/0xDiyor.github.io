@@ -1,0 +1,18 @@
+---
+import type { Project } from '../data/projects';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const url = project.github || project.demo || '#';
+---
+
+<a href={url} target="_blank" rel="noopener noreferrer" class="project-card">
+  <div class="project-name">{project.name}</div>
+  <p class="project-desc">{project.description}</p>
+  <div class="project-tech">
+    {project.tech.map((t) => <span>{t}</span>)}
+  </div>
+</a>
