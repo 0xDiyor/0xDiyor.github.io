@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import RepoMonitor from '../components/RepoMonitor.astro';
+import GitLog from '../components/GitLog.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import { fetchAllProjects } from '../data/projects';
 import { fetchRepoMeta } from '../data/github';
@@ -10,7 +10,7 @@ const repoMeta = await fetchRepoMeta();
 ---
 
 <Base title="0xDiyor — Projects">
-  <RepoMonitor />
+  <GitLog limit={5} />
 
   <div class="home-section">
     <h2 class="section-title">Projects</h2>

@@ -426,94 +426,6 @@ main.container {
   color: var(--text-dim);
 }
 
-/* ── Repo activity monitor (projects page) ── */
-.repomon { outline: none; }
-.repomon:focus-visible { box-shadow: inset 0 0 0 2px var(--accent-dim); }
-.repomon-cmd {
-  font-size: 0.78rem;
-  color: var(--text-dim);
-  margin-bottom: 0.7rem;
-}
-.repomon-cmd::before {
-  content: '~$ ';
-  color: var(--accent-dim);
-}
-.repomon-hint {
-  float: right;
-  font-size: 0.66rem;
-  color: var(--text-dim);
-}
-.repomon-scroll {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-.repomon table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.78rem;
-}
-.repomon th {
-  text-align: left;
-  font-weight: 400;
-  font-size: 0.62rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  padding: 0.3rem 1rem 0.45rem 0.4rem;
-  border-bottom: 1px solid var(--border);
-}
-.repomon td {
-  padding: 0.45rem 1rem 0.45rem 0.4rem;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.repomon tr.sel td { background: var(--accent-glow); }
-.repomon tr.sel td:first-child { box-shadow: inset 2px 0 0 var(--accent); }
-.repomon .rname {
-  color: var(--text-bright);
-  max-width: 32ch;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.repomon .lang { color: var(--accent-dim); }
-.repomon .bar b {
-  color: var(--accent);
-  font-weight: 400;
-  letter-spacing: -0.06em;
-}
-.repomon .bar i {
-  font-style: normal;
-  color: var(--border);
-  letter-spacing: -0.06em;
-}
-.repomon .when, .repomon .stat {
-  color: var(--text-dim);
-  font-size: 0.7rem;
-}
-.repomon .stat.live { color: var(--accent); }
-.repomon-detail {
-  margin-top: 0.9rem;
-  border: 1px solid var(--border);
-  background: var(--bg-surface);
-  padding: 0.75rem 0.9rem;
-  font-size: 0.74rem;
-  line-height: 1.75;
-  min-height: 96px;
-}
-.repomon-detail .cmd {
-  display: block;
-  color: var(--text-dim);
-  margin-bottom: 0.3rem;
-}
-.repomon-detail .cmd::before {
-  content: '~$ ';
-  color: var(--accent-dim);
-}
-.repomon-detail .sha { color: var(--accent); }
-.repomon-detail .sha:hover { color: var(--link-hover); }
-.repomon-detail .dt { color: var(--text-dim); }
-.repomon-detail .none { color: var(--text-dim); }
-
 /* ── Project live metadata (from GitHub API at build time) ── */
 .project-live {
   margin-top: 0.7rem;
@@ -530,33 +442,6 @@ main.container {
   color: var(--accent-dim);
 }
 .project-live time { color: var(--text-dim); }
-
-/* ── About ── */
-.about-content {
-  font-size: 0.92rem;
-  line-height: 1.8;
-}
-.about-content p { margin-bottom: 1.2rem; }
-.about-content h3 {
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent-dim);
-  margin: 1.5rem 0 0.75rem;
-}
-.cert-list {
-  list-style: none;
-  margin: 1rem 0 1.5rem;
-}
-.cert-list li {
-  padding: 0.3rem 0;
-  font-size: 0.85rem;
-}
-.cert-list li::before {
-  content: '✓ ';
-  color: var(--accent);
-  font-weight: 700;
-}
 
 /* ── Footer ── */
 .site-footer {

@@ -2,7 +2,6 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import AsciiBanner from '../components/AsciiBanner.astro';
-import GitLog from '../components/GitLog.astro';
 import PostItem from '../components/PostItem.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import { fetchAllProjects } from '../data/projects';
@@ -36,6 +35,4 @@ const repoMeta = await fetchRepoMeta();
       ))}
     </div>
   </div>
-
-  <GitLog limit={8} />
 </Base>
