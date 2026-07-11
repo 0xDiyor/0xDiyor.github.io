@@ -3,7 +3,7 @@
 // the PROJECTS list and any repo with recent public commits; the detail pane
 // plays back a git log for the selected row. All data is baked in at build —
 // the client script only handles row selection.
-import { sortedProjects } from '../data/projects';
+import { fetchAllProjects } from '../data/projects';
 import { fetchRepoMeta, fetchRepoCommits, type CommitItem } from '../data/github';
 
 const GH_USER = '0xDiyor';
@@ -32,7 +32,7 @@ function actScore(push: string | null): number {
 const rows: Row[] = [];
 const covered = new Set<string>();
 
-for (const p of sortedProjects()) {
+for (const p of await fetchAllProjects()) {
   const repo = repoNameFromUrl(p.github);
   const meta = repo ? repoMeta.get(`https://github.com/${GH_USER}/${repo}`.toLowerCase()) : null;
   if (repo) covered.add(repo.toLowerCase());

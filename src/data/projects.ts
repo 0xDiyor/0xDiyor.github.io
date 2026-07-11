@@ -41,3 +41,27 @@ export const PROJECTS: Project[] = [
 
 export const sortedProjects = () =>
   [...PROJECTS].sort((a, b) => +new Date(b.date) - +new Date(a.date));
+
+// Curated PROJECTS plus any GitHub-pinned repo not already listed.
+// Pin a repo on your profile and it shows up here on the next build;
+// unpin it and it disappears. Curated entries always win over the
+// auto-generated card for the same repo (better descriptions/tags),
+// and entries without a repo (physical projects) are unaffected.
+export async function fetchAllProjects(): Promise<Project[]> {
+  const { fetchPinnedRepos } = await import('./github');
+  const pinned = await fetchPinnedRepos();
+  const curatedUrls = new Set(
+    PROJECTS.map((p) => p.github?.toLowerCase()).filter(Boolean)
+  );
+  const auto: Project[] = pinned
+    .filter((r) => !curatedUrls.has(r.url.toLowerCase()))
+    .map((r) => ({
+      name: r.name,
+      date: r.pushedAt,
+      description: r.description ?? '',
+      tech: [r.language, ...r.topics].filter((t): t is string => !!t).slice(0, 6),
+      github: r.url,
+      demo: null,
+    }));
+  return [...PROJECTS, ...auto].sort((a, b) => +new Date(b.date) - +new Date(a.date));
+}

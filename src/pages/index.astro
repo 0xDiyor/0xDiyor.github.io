@@ -5,13 +5,13 @@ import AsciiBanner from '../components/AsciiBanner.astro';
 import GitLog from '../components/GitLog.astro';
 import PostItem from '../components/PostItem.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import { sortedProjects } from '../data/projects';
+import { fetchAllProjects } from '../data/projects';
 import { fetchRepoMeta } from '../data/github';
 
 const posts = (await getCollection('blog'))
   .sort((a, b) => +b.data.date - +a.data.date)
   .slice(0, 5);
-const projects = sortedProjects().slice(0, 3);
+const projects = (await fetchAllProjects()).slice(0, 3);
 const repoMeta = await fetchRepoMeta();
 ---
 
