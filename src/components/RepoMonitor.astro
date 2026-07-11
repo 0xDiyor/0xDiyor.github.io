@@ -1,0 +1,166 @@
+---
+// Interactive projects × activity monitor (htop-style). Rows are the union of
+// the PROJECTS list and any repo with recent public commits; the detail pane
+// plays back a git log for the selected row. All data is baked in at build —
+// the client script only handles row selection.
+import { sortedProjects } from '../data/projects';
+import { fetchRepoMeta, fetchRepoCommits, type CommitItem } from '../data/github';
+
+const GH_USER = '0xDiyor';
+
+interface Row {
+  label: string;
+  lang: string;
+  act: number; // 0..1 activity score from push recency
+  push: string | null;
+  commits: CommitItem[];
+}
+
+const repoMeta = await fetchRepoMeta();
+const byRepo = await fetchRepoCommits();
+
+const repoNameFromUrl = (url: string | null) =>
+  url?.match(new RegExp(`github\\.com/${GH_USER}/([^/]+)`, 'i'))?.[1] ?? null;
+
+// Activity score: 1.0 = pushed today, fading to 0 at 90 days
+function actScore(push: string | null): number {
+  if (!push) return 0;
+  const days = (Date.now() - new Date(push + 'T00:00:00Z').getTime()) / 86400000;
+  return Math.max(0, Math.min(1, 1 - days / 90));
+}
+
+const rows: Row[] = [];
+const covered = new Set<string>();
+
+for (const p of sortedProjects()) {
+  const repo = repoNameFromUrl(p.github);
+  const meta = repo ? repoMeta.get(`https://github.com/${GH_USER}/${repo}`.toLowerCase()) : null;
+  if (repo) covered.add(repo.toLowerCase());
+  rows.push({
+    label: p.name,
+    lang: meta?.language ?? p.tech[0] ?? '—',
+    act: actScore(meta?.pushedAt ?? null),
+    push: meta?.pushedAt ?? null,
+    commits: (repo && byRepo.get(repo)) || [],
+  });
+}
+
+// Repos with recent commits that aren't registered projects (e.g. this site)
+for (const [name, commits] of byRepo) {
+  if (covered.has(name.toLowerCase())) continue;
+  const meta = repoMeta.get(`https://github.com/${GH_USER}/${name}`.toLowerCase());
+  rows.push({
+    label: name,
+    lang: meta?.language ?? '—',
+    act: actScore(meta?.pushedAt ?? null),
+    push: meta?.pushedAt ?? null,
+    commits,
+  });
+}
+
+rows.sort((a, b) => b.act - a.act || a.label.localeCompare(b.label));
+
+const bar = (act: number) => {
+  const filled = Math.round(act * 10);
+  return { filled: '▰'.repeat(filled), empty: '▱'.repeat(10 - filled) };
+};
+
+// Only what the client script needs: label + commits per row
+const clientRows = rows.map((r) => ({
+  label: r.label,
+  commits: r.commits.slice(0, 3).map((c) => ({ sha: c.shortSha, date: c.date, msg: c.message, url: c.url })),
+}));
+const first = clientRows[0];
+---
+
+{
+  rows.length > 0 && (
+    <div class="home-section">
+      <h2 class="section-title">Activity Monitor</h2>
+      <div class="repomon" id="repomon" tabindex="0" aria-label="Repository activity monitor — use arrow keys to browse rows">
+        <div class="repomon-cmd">
+          repomon --watch<span class="repomon-hint">click or ↑/↓ to browse</span>
+        </div>
+        <div class="repomon-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>repo</th>
+              <th>lang</th>
+              <th>activity</th>
+              <th>last push</th>
+              <th>status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr class={i === 0 ? 'sel' : undefined} data-idx={i}>
+                <td class="rname">{r.label}</td>
+                <td class="lang">{r.lang}</td>
+                <td class="bar">
+                  <b>{bar(r.act).filled}</b>
+                  <i>{bar(r.act).empty}</i>
+                </td>
+                <td class="when">{r.push ?? '—'}</td>
+                <td class={r.act > 0 ? 'stat live' : 'stat'}>{r.act > 0 ? 'ACTIVE' : 'IDLE'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        </div>
+        <div class="repomon-detail" id="repomon-detail">
+          <span class="cmd">git log -3 --oneline {first.label}</span>
+          {first.commits.length > 0 ? (
+            first.commits.map((c) => (
+              <>
+                <a href={c.url} target="_blank" rel="noopener noreferrer" class="sha">{c.sha}</a>{' '}
+                <span class="dt">{c.date}</span> {c.msg}
+                <br />
+              </>
+            ))
+          ) : (
+            <span class="none">fatal: no public repository (yet)</span>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+<script define:vars={{ clientRows }}>
+  const root = document.getElementById('repomon');
+  const detail = document.getElementById('repomon-detail');
+  if (root && detail) {
+    const rows = [...root.querySelectorAll('tbody tr')];
+    let sel = 0;
+
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    function select(i) {
+      sel = (i + rows.length) % rows.length;
+      rows.forEach((tr, j) => tr.classList.toggle('sel', j === sel));
+      const r = clientRows[sel];
+      detail.innerHTML =
+        `<span class="cmd">git log -3 --oneline ${esc(r.label)}</span>` +
+        (r.commits.length
+          ? r.commits
+              .map(
+                (c) =>
+                  `<a href="${esc(c.url)}" target="_blank" rel="noopener noreferrer" class="sha">${esc(c.sha)}</a> ` +
+                  `<span class="dt">${esc(c.date)}</span> ${esc(c.msg)}<br>`
+              )
+              .join('')
+          : '<span class="none">fatal: no public repository (yet)</span>');
+    }
+
+    rows.forEach((tr, i) => tr.addEventListener('click', () => select(i)));
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'j') { select(sel + 1); e.preventDefault(); }
+      if (e.key === 'ArrowUp' || e.key === 'k') { select(sel - 1); e.preventDefault(); }
+    });
+  }
+</script>

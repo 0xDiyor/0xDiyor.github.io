@@ -1,11 +1,13 @@
 ---
 import type { Project } from '../data/projects';
+import type { RepoMeta } from '../data/github';
 
 interface Props {
   project: Project;
+  meta?: RepoMeta | null;
 }
 
-const { project } = Astro.props;
+const { project, meta = null } = Astro.props;
 const url = project.github || project.demo || '#';
 ---
 
@@ -15,4 +17,17 @@ const url = project.github || project.demo || '#';
   <div class="project-tech">
     {project.tech.map((t) => <span>{t}</span>)}
   </div>
+  {
+    meta && (
+      <div class="project-live">
+        {meta.language && <span>{meta.language}</span>}
+        {meta.stars > 0 && <span class="stars">{meta.stars}</span>}
+        {meta.pushedAt && (
+          <span>
+            last commit <time datetime={meta.pushedAt}>{meta.pushedAt}</time>
+          </span>
+        )}
+      </div>
+    )
+  }
 </a>

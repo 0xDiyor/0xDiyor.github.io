@@ -1,0 +1,270 @@
+---
+// Home page hero: full-bleed generative ASCII canvas with the identity block
+// on a left-weighted scrim. The canvas animation is the site's one signature
+// effect — the retired figlet wordmark lives on in legacy/index.html.
+---
+
+<div class="hero">
+  <canvas class="hero-canvas" id="ascii-bg" aria-hidden="true"></canvas>
+  <div class="hero-scrim" aria-hidden="true"></div>
+  <div class="hero-copy">
+    <h1 class="sr-only">0xDiyor</h1>
+    <pre class="hero-mark" aria-hidden="true">
+  ___       ____  _____   _____  ____
+ / _ \__  _|  _ \_ _\ \ / / _ \|  _ \
+| | | \ \/ / | | | | \ V / | | | |_) |
+| |_| |&gt;  &lt;| |_| | |  | || |_| |  _ &lt;
+ \___//_/\_\____/___| |_| \___/|_| \_\</pre>
+    <p class="hero-bio">
+      Cybersecurity student &amp; IT professional in Denver. I run a Proxmox security
+      lab — Wazuh, pfSense, Suricata — break things on purpose, and write up what I learn.
+    </p>
+    <div class="hero-badges">
+      <span>Security+</span>
+      <span>Network+</span>
+      <span>NCA-AIIO</span>
+    </div>
+    <div class="hero-links">
+      <a href="https://github.com/0xDiyor" target="_blank" rel="noopener noreferrer">github</a>
+      <a href="https://www.linkedin.com/in/diyor-r/" target="_blank" rel="noopener noreferrer">linkedin</a>
+      <a href="/about/">about</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .hero {
+    /* Break out of the content column to span the full viewport,
+       and pull up flush against the nav (main has 2.5rem top padding) */
+    position: relative;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-top: -2.5rem;
+    min-height: 440px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  .hero-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .hero-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      rgba(10, 10, 15, 0.94) 0%,
+      rgba(10, 10, 15, 0.78) 42%,
+      rgba(10, 10, 15, 0.18) 100%
+    );
+  }
+  .hero-copy {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: var(--max-w);
+    margin: 0 auto;
+    /* Heavier top padding pushes the identity block down away from the nav */
+    padding: 5rem var(--gutter) 3rem;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .hero-mark {
+    font-family: var(--mono);
+    font-size: clamp(0.5rem, 1.6vw, 0.78rem);
+    line-height: 1.25;
+    color: var(--accent);
+    white-space: pre;
+    display: inline-block;
+    text-shadow: 0 0 30px rgba(0, 229, 160, 0.25), 0 0 60px rgba(0, 229, 160, 0.08);
+    opacity: 0;
+    animation: fadeIn 0.6s ease-out 0.2s forwards;
+  }
+  .hero-bio {
+    margin-top: 0.75rem;
+    max-width: 52ch;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text);
+    opacity: 0;
+    animation: fadeIn 0.6s ease-out 0.4s forwards;
+  }
+  .hero-badges {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeIn 0.6s ease-out 0.6s forwards;
+  }
+  .hero-badges span {
+    font-size: 0.68rem;
+    padding: 0.15rem 0.55rem;
+    border: 1px solid var(--border);
+    color: var(--accent-dim);
+    letter-spacing: 0.03em;
+    background: rgba(10, 10, 15, 0.6);
+  }
+  .hero-links {
+    margin-top: 1.1rem;
+    display: flex;
+    gap: 1.5rem;
+    opacity: 0;
+    animation: fadeIn 0.6s ease-out 0.8s forwards;
+  }
+  .hero-links a {
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    transition: color 0.15s;
+  }
+  .hero-links a:hover { color: var(--accent); }
+  .hero-links a::before {
+    content: '>';
+    color: var(--accent-dim);
+    margin-right: 0.3rem;
+    font-weight: 700;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    .hero { min-height: 360px; }
+    .hero-copy { padding: 3.5rem var(--gutter) 2.5rem; }
+    .hero-mark { font-size: clamp(0.42rem, 2vw, 0.62rem); }
+    .hero-bio { font-size: 0.85rem; }
+    /* Text wraps across the full width on small screens — flatten the scrim */
+    .hero-scrim {
+      background: rgba(10, 10, 15, 0.82);
+    }
+  }
+</style>
+
+<script>
+  const canvas = document.getElementById('ascii-bg') as HTMLCanvasElement | null;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d')!;
+    const hero = canvas.parentElement!;
+
+    // Character sets — cyber / hacker aesthetic (canvas-safe only)
+    const allChars = ['01', '{}[]()<>', '0123456789ABCDEF', '.:;+*=#@%', '$/\\|~^&!?', '-_'].join('');
+
+    let cols = 0, rows = 0, cellW = 0, cellH = 0;
+    let isVisible = true;
+    let heroInView = true;
+    const isMobile = window.innerWidth < 600;
+    let frameCount = 0;
+
+    function resize() {
+      const rect = hero.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // Setting canvas.width resets all context state, so transform and font
+      // must be re-applied after
+      canvas!.width = rect.width * dpr;
+      canvas!.height = rect.height * dpr;
+      canvas!.style.width = rect.width + 'px';
+      canvas!.style.height = rect.height + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const fontSize = Math.max(10, Math.min(14, rect.width / 60));
+      ctx.font = fontSize + 'px "JetBrains Mono", monospace';
+      cellW = fontSize * 0.62;
+      cellH = fontSize * 1.35;
+      cols = Math.ceil(rect.width / cellW);
+      rows = Math.ceil(rect.height / cellH);
+    }
+
+    function paint(t: number) {
+      const rect = hero.getBoundingClientRect();
+      ctx.clearRect(0, 0, rect.width, rect.height);
+
+      const time = t * 0.001;
+
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          const x = col * cellW;
+          const y = row * cellH + cellH;
+          const nx = col / cols;
+          const ny = row / rows;
+
+          // Layered wave pattern
+          const wave1 = Math.sin(nx * 4.0 + time * 0.7) * Math.cos(ny * 3.0 + time * 0.5);
+          const wave2 = Math.sin((nx + ny) * 3.0 - time * 0.4);
+          const wave3 = Math.cos(nx * 2.0 - time * 0.3) * Math.sin(ny * 5.0 + time * 0.6);
+          const combined = (wave1 + wave2 + wave3) / 3.0;
+
+          // Vignette: fade toward the edges
+          const dx = nx - 0.5;
+          const dy = ny - 0.5;
+          const vignette = 1.0 - Math.min(1.0, Math.sqrt(dx * dx + dy * dy) * 1.4);
+
+          const brightness = (combined * 0.5 + 0.5) * vignette;
+          // Only draw above threshold — creates the sparse feel
+          if (brightness < 0.15) continue;
+
+          const charIndex =
+            Math.floor((Math.sin(nx * 7 + ny * 11 + time * 0.8) * 0.5 + 0.5) * allChars.length) %
+            allChars.length;
+
+          // The scrim keeps text readable, so the field can run a bit brighter
+          // than the old backdrop did
+          const alpha = brightness * 0.5;
+          const g = Math.floor(180 + brightness * 49);
+          ctx.fillStyle = `rgba(0, ${g}, ${Math.floor(100 + brightness * 60)}, ${alpha})`;
+          ctx.fillText(allChars[charIndex], x, y);
+        }
+      }
+    }
+
+    function draw(t: number) {
+      if (isVisible) {
+        // Skip every other frame on mobile for battery
+        frameCount++;
+        if (!isMobile || frameCount % 2 === 0) paint(t);
+      }
+      requestAnimationFrame(draw);
+    }
+
+    // Pause when the tab is hidden or the hero is scrolled out of view
+    function checkVisibility() {
+      isVisible = !document.hidden && heroInView;
+    }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver((entries) => {
+        heroInView = entries[0].isIntersecting;
+        checkVisibility();
+      }, { threshold: 0 }).observe(hero);
+    }
+    document.addEventListener('visibilitychange', checkVisibility);
+
+    let resizeTimer: ReturnType<typeof setTimeout>;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        resize();
+        if (reduceMotion) paint(12345);
+      }, 100);
+    });
+
+    resize();
+    if (reduceMotion) {
+      // One static frame instead of animating
+      paint(12345);
+    } else {
+      requestAnimationFrame(draw);
+    }
+  }
+</script>

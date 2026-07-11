@@ -1,14 +1,26 @@
 ---
 import Base from '../layouts/Base.astro';
+import RepoMonitor from '../components/RepoMonitor.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import { sortedProjects } from '../data/projects';
+import { fetchRepoMeta } from '../data/github';
 
 const projects = sortedProjects();
+const repoMeta = await fetchRepoMeta();
 ---
 
 <Base title="0xDiyor — Projects">
   <h2 class="section-title">Projects</h2>
   <div class="project-grid">
-    {projects.map((project) => <ProjectCard project={project} />)}
+    {
+      projects.map((project) => (
+        <ProjectCard
+          project={project}
+          meta={project.github ? (repoMeta.get(project.github.toLowerCase()) ?? null) : null}
+        />
+      ))
+    }
   </div>
+
+  <RepoMonitor />
 </Base>

@@ -13,14 +13,11 @@ const {
 
 const path = Astro.url.pathname;
 const navItems = [
-  { href: '/', label: 'home' },
   { href: '/blog/', label: 'blog' },
   { href: '/projects/', label: 'projects' },
   { href: '/about/', label: 'about' },
 ];
-// Home is active only on exact match; others match any sub-path (e.g. /blog/post-slug/)
-const isActive = (href: string) =>
-  href === '/' ? path === '/' : path.startsWith(href);
+const isActive = (href: string) => path.startsWith(href);
 ---
 
 <html lang="en">
@@ -52,6 +49,9 @@ const isActive = (href: string) =>
   <body>
     <nav class="site-nav">
       <div class="container nav-inner">
+        <a href="/" class="nav-brand"
+          ><span class="prompt">~$ </span>0xdiyor<span class="cursor">▊</span></a
+        >
         <ul class="nav-links">
           {navItems.map((item) => (
             <li>
@@ -70,7 +70,7 @@ const isActive = (href: string) =>
 
     <footer class="site-footer">
       <div class="container">
-        <span>0xDiyor</span>
+        <span>0xDiyor</span> &middot; <a href="/rss.xml">rss</a>
       </div>
     </footer>
   </body>

@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    # Nightly rebuild so the build-time GitHub feed stays at most a day old
+    - cron: '0 9 * * *'
 
 permissions:
   contents: read
@@ -13,6 +16,10 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # Authenticated GitHub API requests during the build (src/data/github.ts)
+      # so shared CI runners don't hit the anonymous rate limit
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
