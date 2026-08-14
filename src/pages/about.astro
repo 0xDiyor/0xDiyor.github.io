@@ -20,7 +20,7 @@ import Base from '../layouts/Base.astro';
       <dl class="kv">
         <div><dt>role</dt><dd>cybersecurity student &middot; IT professional</dd></div>
         <div><dt>edu</dt><dd>WGU B.S. (Aug 2028)</dd></div>
-        <div><dt>certs</dt><dd>CySA+ &middot; Security+ &middot; Network+ &middot; AZ-104 &middot; NCA-AIIO</dd></div>
+        <div><dt>certs</dt><dd>CySA+, Security+, Network+, AZ-104, NCA-AIIO</dd></div>
         <div><dt>lab</dt><dd>Proxmox &middot; Wazuh &middot; Tailscale</dd></div>
         <div><dt>focus</dt><dd>SOC analyst &middot; pentesting</dd></div>
         <div class="swatches" aria-hidden="true">
@@ -87,7 +87,9 @@ import Base from '../layouts/Base.astro';
 
   .fetch {
     display: flex;
-    gap: 3rem;
+    flex-wrap: wrap;
+    column-gap: 3rem;
+    row-gap: 1.5rem;
     align-items: center;
   }
   .logo {
