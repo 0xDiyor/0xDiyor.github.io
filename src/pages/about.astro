@@ -20,7 +20,7 @@ import Base from '../layouts/Base.astro';
       <dl class="kv">
         <div><dt>role</dt><dd>cybersecurity student &middot; IT professional</dd></div>
         <div><dt>edu</dt><dd>WGU B.S. (Aug 2028)</dd></div>
-        <div><dt>certs</dt><dd>CySA+, Security+, Network+, AZ-104, NCA-AIIO</dd></div>
+        <div><dt>certs</dt><dd>CySA+ &middot; Security+ &middot; Network+<br />AZ-104 &middot; NCA-AIIO</dd></div>
         <div><dt>lab</dt><dd>Proxmox &middot; Wazuh &middot; Tailscale</dd></div>
         <div><dt>focus</dt><dd>SOC analyst &middot; pentesting</dd></div>
         <div class="swatches" aria-hidden="true">
@@ -65,12 +65,12 @@ import Base from '../layouts/Base.astro';
 </Base>
 
 <style>
-  /* Center the whole session block: size it to its widest line
-     (fit-content) so the auto margins split the leftover space evenly.
+  /* Center the whole session block on a fixed character column rather than
+     sizing it to its widest line — otherwise one long row (the certs list)
+     widens the block and shifts every other line sideways with it.
      Text inside stays left-aligned so it reads like terminal output. */
   .about {
-    width: fit-content;
-    max-width: 100%;
+    width: min(100%, 62ch);
     margin: 0 auto;
   }
 
@@ -88,7 +88,7 @@ import Base from '../layouts/Base.astro';
   .fetch {
     display: flex;
     flex-wrap: wrap;
-    column-gap: 3rem;
+    column-gap: 2.5rem;
     row-gap: 1.5rem;
     align-items: center;
   }
@@ -124,7 +124,8 @@ import Base from '../layouts/Base.astro';
     font-size: 0.88rem;
     line-height: 1.8;
   }
-  .prose p { margin-bottom: 1rem; max-width: 64ch; }
+  /* Blocks fill the centered column so every left and right edge lines up. */
+  .prose p { margin-bottom: 1rem; }
 
   .now {
     border: 1px solid var(--border);
@@ -132,7 +133,6 @@ import Base from '../layouts/Base.astro';
     padding: 0.9rem 1.1rem;
     font-size: 0.82rem;
     line-height: 1.9;
-    max-width: 64ch;
   }
   .now .item::before {
     content: '▸ ';
