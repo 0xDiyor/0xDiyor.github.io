@@ -46,15 +46,6 @@ export const PROJECTS: Project[] = [
     github: 'https://github.com/0xDiyor/Intro-to-Programming-Python',
     demo: null,
   },
-  {
-    name: 'Homelab Infrastructure',
-    date: '2026-03-01',
-    description:
-      'Full security lab built on Proxmox: OPNsense firewall, Suricata IDS, Wazuh SIEM, and GNS3 network simulation. Segmented for safe attack simulation.',
-    tech: ['Proxmox', 'OPNsense', 'Suricata', 'Wazuh', 'GNS3'],
-    github: null,
-    demo: null,
-  },
 ];
 
 export const sortedProjects = () =>
