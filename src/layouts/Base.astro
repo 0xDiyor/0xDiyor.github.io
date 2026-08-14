@@ -14,8 +14,8 @@ const {
 const path = Astro.url.pathname;
 const navItems = [
   { href: '/blog/', label: 'blog' },
-  { href: '/cves/', label: 'cves' },
   { href: '/projects/', label: 'projects' },
+  { href: '/cves/', label: 'cves' },
   { href: '/about/', label: 'about' },
 ];
 const isActive = (href: string) => path.startsWith(href);
