@@ -2,14 +2,17 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import AsciiBanner from '../components/AsciiBanner.astro';
+import BountyCard from '../components/BountyCard.astro';
 import PostItem from '../components/PostItem.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import { sortedBounties } from '../data/bounties';
 import { fetchAllProjects } from '../data/projects';
 import { fetchRepoMeta } from '../data/github';
 
 const posts = (await getCollection('blog'))
   .sort((a, b) => +b.data.date - +a.data.date)
   .slice(0, 5);
+const bounties = sortedBounties().slice(0, 3);
 const projects = (await fetchAllProjects()).slice(0, 3);
 const repoMeta = await fetchRepoMeta();
 ---
@@ -23,6 +26,17 @@ const repoMeta = await fetchRepoMeta();
       {posts.map((post) => <PostItem post={post} />)}
     </ul>
   </div>
+
+  {
+    bounties.length > 0 && (
+      <div class="home-section">
+        <h2 class="section-title">Recent CVEs & Bounties</h2>
+        <div class="bounty-grid">
+          {bounties.map((bounty) => <BountyCard bounty={bounty} />)}
+        </div>
+      </div>
+    )
+  }
 
   <div class="home-section">
     <h2 class="section-title">Recent Projects</h2>

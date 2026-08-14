@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import BountyCard from '../components/BountyCard.astro';
+import { sortedBounties } from '../data/bounties';
+
+const bounties = sortedBounties();
+---
+
+<Base title="0xDiyor: CVEs & Bounties">
+  <h2 class="section-title">CVEs & Bounties</h2>
+
+  {bounties.length === 0 ? (
+    <p class="bounty-empty">No advisories published yet.</p>
+  ) : (
+    <div class="bounty-grid">
+      {bounties.map((bounty) => <BountyCard bounty={bounty} />)}
+    </div>
+  )}
+</Base>

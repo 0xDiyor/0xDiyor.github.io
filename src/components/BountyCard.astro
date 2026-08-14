@@ -1,0 +1,59 @@
+---
+import type { Bounty } from '../data/bounties';
+
+interface Props {
+  bounty: Bounty;
+}
+
+const { bounty } = Astro.props;
+const primary = bounty.cve ?? bounty.type[0] ?? 'Advisory';
+const isExternal = (url: string) => url.startsWith('http');
+const amount =
+  bounty.bounty != null ? `$${bounty.bounty.toLocaleString('en-US')}` : null;
+---
+
+<div class="bounty-card">
+  <div class="bounty-head">
+    <span class="bounty-primary">{primary}</span>
+    <span class={`bounty-sev sev-${bounty.severity.toLowerCase()}`}>
+      {bounty.severity}
+    </span>
+  </div>
+
+  <div class="bounty-meta">
+    {bounty.programUrl ? (
+      <a class="bounty-program" href={bounty.programUrl} target="_blank" rel="noopener noreferrer">
+        {bounty.program}
+      </a>
+    ) : (
+      <span class="bounty-program">{bounty.program}</span>
+    )}
+    <time datetime={bounty.date}>{bounty.date}</time>
+  </div>
+
+  <p class="bounty-title">{bounty.title}</p>
+
+  <div class="bounty-type">
+    {bounty.type.map((t) => <span>{t}</span>)}
+  </div>
+
+  {(amount || bounty.links.length > 0) && (
+    <div class="bounty-foot">
+      {amount && <span class="bounty-amount">{amount}</span>}
+      {bounty.links.length > 0 && (
+        <div class="bounty-links">
+          {bounty.links.map((link) => (
+            <a
+              href={link.url}
+              {...(isExternal(link.url)
+                ? { target: '_blank', rel: 'noopener noreferrer' }
+                : {})}
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  )}
+</div>

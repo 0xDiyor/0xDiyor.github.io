@@ -10,6 +10,7 @@ Personal portfolio and blog, built with [Astro](https://astro.build) and hosted 
 │   ├── content/blog/       # Blog posts — one .md file per post (frontmatter = metadata)
 │   ├── content.config.ts   # Frontmatter schema — validates posts at build time
 │   ├── data/projects.ts    # Projects list (rendered on /projects and home)
+│   ├── data/bounties.ts    # CVE/bug bounty entries (rendered on /cves and home)
 │   ├── assets/images/      # Post images — auto-optimized to WebP at build
 │   ├── components/         # Reusable UI pieces (post item, project card, date)
 │   ├── layouts/Base.astro  # Shared page shell (head, nav, footer)
@@ -50,6 +51,34 @@ Content starts here...
 
 Push to `main` — GitHub Actions builds and deploys automatically (~2 min).
 The filename becomes the URL: `0xdiyor.com/blog/my-post-slug/`.
+
+## Adding a CVE or bounty
+
+Edit `src/data/bounties.ts` and add one entry per finding. `cve` is optional:
+many bounties never receive a CVE ID, and the card falls back to the first
+vulnerability class instead. Keep `bounty` as `null` if you do not want to
+publish the amount.
+
+```ts
+{
+  cve: 'CVE-2026-0000',
+  program: 'Example Program',
+  programUrl: 'https://hackerone.com/example',
+  title: 'Stored XSS in the support portal message composer',
+  severity: 'High', // Critical | High | Medium | Low
+  type: ['Stored XSS'],
+  date: '2026-05-01',
+  bounty: 2500,
+  links: [
+    { label: 'NVD', url: 'https://nvd.nist.gov/vuln/detail/CVE-2026-0000' },
+    { label: 'writeup', url: '/blog/my-writeup/' }, // internal links need no domain
+  ],
+}
+```
+
+Entries render on `/cves/` and the home page after the next deploy.
+Full technical writeups belong in `src/content/blog/`; link them from the
+bounty entry's `links` array.
 
 ## Deployment
 
