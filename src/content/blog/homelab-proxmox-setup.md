@@ -1,8 +1,8 @@
 ---
 title: "Building a Cybersecurity Homelab with Proxmox"
-date: 2026-04-01
+date: 2026-04-05
 tags: ["homelab", "proxmox", "infrastructure"]
-description: "Documenting my homelab architecture: Proxmox, pfSense, Suricata, Wazuh, and more."
+description: "Documenting my homelab architecture: Proxmox, OPNsense, Suricata, Wazuh, and more."
 ---
 ## Overview
 
@@ -25,7 +25,7 @@ Storage is handled by a **Ugreen DXP2800 NAS** with 12TB of raw capacity, runnin
 
 The stack is layered:
 
-- **pfSense** — firewall and routing, VLAN segmentation between lab segments
+- **OPNsense** — firewall and routing, VLAN segmentation between lab segments (a pfSense fork)
 - **Suricata** — network IDS/IPS, monitoring traffic between segments
 - **Wazuh** — SIEM and host-based intrusion detection
 - **GNS3** — network simulation for testing topologies before deploying
