@@ -1,6 +1,6 @@
 ---
 title: "opskit: A Zero-Dependency PowerShell Diagnostics Toolkit for Windows"
-date: 2026-08-14
+date: 2026-08-04
 tags: ["powershell", "tooling", "scripting", "projects"]
 description: "How opskit is built: a zero-dependency PowerShell diagnostics toolkit for Windows, what's in it, the CI setup, and the script runner I deliberately haven't shipped yet."
 ---
