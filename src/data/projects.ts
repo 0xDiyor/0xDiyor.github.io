@@ -11,30 +11,48 @@ export interface Project {
 
 export const PROJECTS: Project[] = [
   {
-    name: 'Threat Intelligence Dashboard',
-    date: '2026-04-01',
+    name: '0xDiyor.github.io',
+    date: '2026-08-14',
     description:
-      'React-based dashboard integrating VirusTotal and AbuseIPDB APIs for real-time threat monitoring. Dark terminal aesthetic with Recharts visualizations.',
-    tech: ['React', 'Flask', 'SQLite', 'API Integration'],
-    github: 'https://github.com/0xDiyor',
+      'This portfolio site and blog, built with Astro 5. Static output with zero client JavaScript, build-time GitHub API data for projects, and a nightly rebuild cron.',
+    tech: ['Astro', 'TypeScript', 'Markdown'],
+    github: 'https://github.com/0xDiyor/0xDiyor.github.io',
+    demo: null,
+  },
+  {
+    name: 'opskit',
+    date: '2026-08-04',
+    description:
+      'Terminal based IT diagnostics toolkit for Windows. Network, ports, health, and cert checks behind one menu, with a vetted script runner planned. Zero dependencies, PowerShell 5.1 compatible.',
+    tech: ['PowerShell'],
+    github: 'https://github.com/0xDiyor/opskit',
+    demo: null,
+  },
+  {
+    name: 'voidkit',
+    date: '2026-05-24',
+    description:
+      'Modular Python framework for security and networking, inspired by Metasploit\u2019s use/set/run workflow and neutral between red and blue team operations. Foundation phase.',
+    tech: ['Python'],
+    github: 'https://github.com/0xDiyor/voidkit',
+    demo: null,
+  },
+  {
+    name: 'Intro to Programming Python',
+    date: '2026-05-01',
+    description:
+      'Repository of Python exercises and labs from CCD coursework: list comprehensions, dictionaries, string methods, and more.',
+    tech: ['Python'],
+    github: 'https://github.com/0xDiyor/Intro-to-Programming-Python',
     demo: null,
   },
   {
     name: 'Homelab Infrastructure',
     date: '2026-03-01',
     description:
-      'Full security lab built on Proxmox — pfSense firewall, Suricata IDS, Wazuh SIEM, GNS3 network simulation. Segmented for safe attack simulation.',
-    tech: ['Proxmox', 'pfSense', 'Suricata', 'Wazuh', 'GNS3'],
-    github: 'https://github.com/0xDiyor',
-    demo: null,
-  },
-  {
-    name: 'Intro to Programming Python',
-    date: '2026-02-01',
-    description:
-      'Repository of Python exercises and labs from CCD coursework — covering list comprehensions, dictionaries, string methods, and more.',
-    tech: ['Python'],
-    github: 'https://github.com/0xDiyor/Intro-to-Programming-Python',
+      'Full security lab built on Proxmox: OPNsense firewall, Suricata IDS, Wazuh SIEM, and GNS3 network simulation. Segmented for safe attack simulation.',
+    tech: ['Proxmox', 'OPNsense', 'Suricata', 'Wazuh', 'GNS3'],
+    github: null,
     demo: null,
   },
 ];
