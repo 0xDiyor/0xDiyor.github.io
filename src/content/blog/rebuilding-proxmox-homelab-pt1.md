@@ -101,7 +101,7 @@ In the Tailscale admin panel at `login.tailscale.com/admin/machines`, I approved
 
 Configuring the BIOS VRAM, flashing a USB using **Rufus**, and setting up Proxmox again was a pretty easy task. It did refresh my memory on some of the nuances and led me to choose ZFS over LVM as my filesystem this time around. The bulk of my learning stemmed from installing Tailscale, particularly setting up an LXC container, configuring TUN, and a subnet router for easier access to all my local network resources. However, this is just the beginning!
 
-Part 2 will cover me setting up Wazuh in a VM alongside pfSense and Suricata. 👀
+Part 2 will cover me setting up Wazuh in a VM alongside OPNsense and Suricata. 👀
 
 ## References
 

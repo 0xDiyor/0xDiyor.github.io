@@ -14,7 +14,7 @@ Too much of what I learn stays in my head or gets lost in scattered notes. This 
 
 Here's what you can expect to see on this blog:
 
-- **Homelab writeups** — documenting my Proxmox/pfSense/Wazuh/Suricata stack, network segmentation decisions, and the mistakes I make along the way
+- **Homelab writeups** — documenting my Proxmox/OPNsense/Wazuh/Suricata stack, network segmentation decisions, and the mistakes I make along the way
 - **CTF writeups** — walkthroughs of challenges I solve, with a focus on methodology over just answers
 - **Tool deep-dives** — exploring security tools, scripting automation, and building detection rules
 - **Learning notes** — honest documentation of concepts as I learn them, not polished after the fact

@@ -123,7 +123,7 @@ The other thing worth noting is the decision to keep all three components on a s
 
 Wazuh is deployed, the first agent is connected, and data is flowing. The SIEM is up. But right now it's basically running on defaults. The actual value comes from tuning the rulesets, writing custom detection rules, and integrating other data sources.
 
-In part 3, I'll go deeper into Wazuh configuration. Custom rules, decoder tuning, and getting Suricata events feeding in from pfSense. 👀
+In part 3, I'll go deeper into Wazuh configuration. Custom rules, decoder tuning, and getting Suricata events feeding in from OPNsense. 👀
 
 ## References
 
