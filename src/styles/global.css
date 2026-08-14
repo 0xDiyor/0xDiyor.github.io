@@ -78,7 +78,8 @@ main.container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
 }
 .nav-brand {
   color: var(--text-bright);
@@ -92,17 +93,27 @@ main.container {
   color: var(--accent);
   animation: blink 1.2s step-end infinite;
 }
+/* Every link stays visible at every width: the row wraps onto a second line
+   rather than overflowing, and no item is allowed to shrink or be clipped.
+   When the links no longer fit beside the brand they wrap to their own full
+   width row and stay right aligned. */
 .nav-links {
   display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 0.25rem;
   list-style: none;
+  min-width: 0;
 }
+.nav-links li { flex: 0 0 auto; }
 .nav-links a {
   color: var(--text-dim);
   font-size: 0.82rem;
   padding: 0.35rem 0.65rem;
   transition: color 0.15s, background 0.15s;
   letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 .nav-links a:hover,
 .nav-links a.active {
@@ -561,9 +572,10 @@ main.container {
 @media (max-width: 600px) {
   html { font-size: 14px; }
   :root { --gutter: 1rem; }
-  .nav-inner { gap: 0.5rem; }
-  .nav-links { gap: 0.1rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-  .nav-links::-webkit-scrollbar { display: none; }
+  .nav-inner { gap: 0.4rem 0.5rem; }
+  /* Wraps instead of scrolling sideways, so nothing can sit off screen behind
+     a hidden scrollbar on a narrow phone. */
+  .nav-links { gap: 0.2rem 0.1rem; }
   .nav-links a { padding: 0.4rem 0.5rem; font-size: 0.75rem; white-space: nowrap; min-height: 44px; display: flex; align-items: center; }
   .post-row { flex-direction: column; gap: 0.1rem; }
   .post-row time { width: auto; font-size: 0.72rem; }
