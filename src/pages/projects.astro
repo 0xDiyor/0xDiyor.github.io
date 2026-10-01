@@ -1,28 +1,26 @@
 ---
 import Base from '../layouts/Base.astro';
-import GitLog from '../components/GitLog.astro';
-import ProjectCard from '../components/ProjectCard.astro';
 import { fetchAllProjects } from '../data/projects';
-import { fetchRepoMeta } from '../data/github';
 
 const projects = await fetchAllProjects();
-const repoMeta = await fetchRepoMeta();
 ---
 
 <Base title="0xDiyor — Projects">
-  <GitLog limit={5} />
-
-  <div class="home-section">
-    <h2 class="section-title">Projects</h2>
-    <div class="project-grid">
-      {
-        projects.map((project) => (
-          <ProjectCard
-            project={project}
-            meta={project.github ? (repoMeta.get(project.github.toLowerCase()) ?? null) : null}
-          />
-        ))
-      }
-    </div>
+  <h1 class="page-title">projects</h1>
+  <div>
+    {
+      projects.map((p) => (
+        <div class="project">
+          <div class="project-head">
+            <a class="ext" href={p.github || p.demo || '#'} target="_blank" rel="noopener noreferrer">
+              {p.name}
+            </a>
+            <time datetime={p.date}>{p.date.slice(0, 7)}</time>
+          </div>
+          {p.description && <p>{p.description}</p>}
+          {p.tech.length > 0 && <span class="dim">{p.tech.join(' · ')}</span>}
+        </div>
+      ))
+    }
   </div>
 </Base>

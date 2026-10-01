@@ -5,7 +5,7 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    # Nightly rebuild so the build-time GitHub feed stays at most a day old
+    # Nightly rebuild so pinned GitHub repos stay at most a day old
     - cron: '0 9 * * *'
 
 permissions:
