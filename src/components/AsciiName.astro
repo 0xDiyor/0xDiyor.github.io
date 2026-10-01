@@ -21,7 +21,7 @@ const { size = 'sm' } = Astro.props;
   }
   .ascii-name-lg {
     width: 260px;
-    height: 52px;
+    height: 60px;
   }
   .ascii-name-sm {
     width: 220px;
@@ -75,8 +75,9 @@ const { size = 'sm' } = Astro.props;
       this.h = rect.height;
       this.cw = fs * 0.62;
       this.ch = fs * 1.2;
-      this.cols = Math.ceil(rect.width / this.cw);
-      this.rows = Math.ceil(rect.height / this.ch);
+      // Round down so the last row and column of characters stay inside the canvas
+      this.cols = Math.floor(rect.width / this.cw);
+      this.rows = Math.floor(rect.height / this.ch);
 
       const m = document.createElement('canvas');
       m.width = this.cols;
@@ -113,7 +114,8 @@ const { size = 'sm' } = Astro.props;
           const nx = c / cols;
           const ny = r / rows;
           ctx.fillStyle = `rgba(255, 255, 255, ${0.75 + wave(nx, ny, time) * 0.25})`;
-          ctx.fillText(charAt(nx, ny, time), c * cw, r * ch + ch);
+          // Baseline sits 80% down the cell so descenders don't spill into the next row
+          ctx.fillText(charAt(nx, ny, time), c * cw, r * ch + ch * 0.8);
         }
       }
     }
