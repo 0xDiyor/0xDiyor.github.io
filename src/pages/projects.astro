@@ -6,18 +6,13 @@ import { fetchAllProjects, type Project } from '../data/projects';
 
 const projects = await fetchAllProjects();
 
-// Group under each project's category. Listed categories come first in this
-// order; any others follow by newest project, with uncategorized last.
+// Group under each project's category, with listed categories first in
+// this order. Pinned repos without a curated entry land in Tools.
 const ORDER = ['Tools', 'Sites & coursework'];
 const groups = new Map<string, Project[]>(ORDER.map((c) => [c, []]));
 for (const p of projects) {
-  const key = p.category ?? 'Other';
+  const key = p.category ?? 'Tools';
   groups.set(key, [...(groups.get(key) ?? []), p]);
-}
-const other = groups.get('Other');
-if (other) {
-  groups.delete('Other');
-  groups.set('Other', other);
 }
 const sections = [...groups].filter(([, list]) => list.length > 0);
 ---

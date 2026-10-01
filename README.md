@@ -61,9 +61,9 @@ calculated from the word count at build.
 Add an entry to `PROJECTS` in `src/data/projects.ts`. Besides the required
 fields, `category` sets the heading it's grouped under on `/projects/`
 (`Tools` and `Sites & coursework` are listed first; anything without one goes
-under `Other`), and `writeup` takes a blog post slug to link the project to its
+under `Tools`), and `writeup` takes a blog post slug to link the project to its
 post. Repos pinned on the GitHub profile but not listed here show up under
-`Other` automatically.
+`Tools` automatically.
 
 ## Adding a CVE or bounty
 
