@@ -1,0 +1,146 @@
+---
+// "0xDiyor" drawn out of shifting ASCII characters on a canvas.
+// `lg` is the home page hero, `sm` is the header on every other page.
+// The word is rendered into a low-res mask (one pixel per character cell),
+// then only cells inside the letters get a character, brightened by the
+// same layered wave the old full-bleed canvas used.
+interface Props {
+  size?: 'sm' | 'lg';
+}
+
+const { size = 'sm' } = Astro.props;
+---
+
+<canvas class={`ascii-name ascii-name-${size}`} data-fs={size === 'lg' ? 4.5 : 3.6} aria-hidden="true"
+></canvas>
+
+<style>
+  .ascii-name {
+    display: block;
+    max-width: 100%;
+  }
+  .ascii-name-lg {
+    width: 260px;
+    height: 52px;
+  }
+  .ascii-name-sm {
+    width: 220px;
+    height: 48px;
+  }
+</style>
+
+<script>
+  const WORD = '0xDiyor';
+  const CHARS = ['01', '{}[]()<>', '0123456789ABCDEF', '.:;+*=#@%', '$/\\|~^&!?', '-_'].join('');
+  const FONT = '"IBM Plex Mono", monospace';
+
+  function wave(nx: number, ny: number, time: number) {
+    const w1 = Math.sin(nx * 4.0 + time * 0.7) * Math.cos(ny * 3.0 + time * 0.5);
+    const w2 = Math.sin((nx + ny) * 3.0 - time * 0.4);
+    const w3 = Math.cos(nx * 2.0 - time * 0.3) * Math.sin(ny * 5.0 + time * 0.6);
+    return ((w1 + w2 + w3) / 3) * 0.5 + 0.5;
+  }
+
+  function charAt(nx: number, ny: number, time: number) {
+    const i = Math.floor((Math.sin(nx * 7 + ny * 11 + time * 0.8) * 0.5 + 0.5) * CHARS.length);
+    return CHARS[i % CHARS.length];
+  }
+
+  class AsciiName {
+    canvas: HTMLCanvasElement;
+    ctx: CanvasRenderingContext2D;
+    w = 0;
+    h = 0;
+    cw = 0;
+    ch = 0;
+    cols = 0;
+    rows = 0;
+    mask = new Float32Array(0);
+
+    constructor(canvas: HTMLCanvasElement) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d')!;
+    }
+
+    build() {
+      const rect = this.canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // Setting canvas.width resets context state, so transform and font follow it
+      this.canvas.width = rect.width * dpr;
+      this.canvas.height = rect.height * dpr;
+      this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const fs = parseFloat(this.canvas.dataset.fs ?? '4');
+      this.ctx.font = `600 ${fs}px ${FONT}`;
+      this.w = rect.width;
+      this.h = rect.height;
+      this.cw = fs * 0.62;
+      this.ch = fs * 1.2;
+      this.cols = Math.ceil(rect.width / this.cw);
+      this.rows = Math.ceil(rect.height / this.ch);
+
+      const m = document.createElement('canvas');
+      m.width = this.cols;
+      m.height = this.rows;
+      const mc = m.getContext('2d')!;
+      // Cells are taller than wide, so stretch the word horizontally by ch/cw
+      // to keep its proportions once each pixel becomes a character
+      const stretch = this.ch / this.cw;
+      let size = this.rows * 1.05;
+      mc.font = `700 ${size}px ${FONT}`;
+      size *= Math.min(1, (this.cols * 0.98) / (mc.measureText(WORD).width * stretch));
+      mc.font = `700 ${size}px ${FONT}`;
+      mc.setTransform(stretch, 0, 0, 1, 0, 0);
+      mc.textBaseline = 'middle';
+      mc.fillStyle = '#fff';
+      mc.fillText(WORD, 0, this.rows / 2 + 0.5);
+      const data = mc.getImageData(0, 0, this.cols, this.rows).data;
+      this.mask = new Float32Array(this.cols * this.rows);
+      for (let i = 0; i < this.mask.length; i++) this.mask[i] = data[i * 4 + 3] / 255;
+    }
+
+    paint(t: number) {
+      const { ctx, cols, rows, cw, ch } = this;
+      ctx.clearRect(0, 0, this.w, this.h);
+      const time = t * 0.001;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          if (this.mask[r * cols + c] < 0.35) continue;
+          const nx = c / cols;
+          const ny = r / rows;
+          ctx.fillStyle = `rgba(255, 255, 255, ${0.75 + wave(nx, ny, time) * 0.25})`;
+          ctx.fillText(charAt(nx, ny, time), c * cw, r * ch + ch);
+        }
+      }
+    }
+  }
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const STATIC_T = 12345;
+
+  // Wait for the webfont so the mask and the characters use the real glyphs
+  document.fonts.ready.then(() => {
+    const names = [...document.querySelectorAll<HTMLCanvasElement>('.ascii-name')].map(
+      (c) => new AsciiName(c)
+    );
+    const rebuild = () => {
+      names.forEach((n) => {
+        n.build();
+        n.paint(STATIC_T);
+      });
+    };
+    rebuild();
+
+    let resizeTimer: ReturnType<typeof setTimeout>;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(rebuild, 100);
+    });
+
+    if (reduceMotion) return;
+    const loop = (t: number) => {
+      if (!document.hidden) names.forEach((n) => n.paint(t));
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  });
+</script>
