@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import AsciiName from '../components/AsciiName.astro';
 import Nav from '../components/Nav.astro';
+import Social from '../components/Social.astro';
 
 interface Props {
   title?: string;
@@ -64,6 +65,7 @@ const path = Astro.url.pathname;
     <footer>
       <span>&copy; {new Date().getFullYear()} 0xDiyor</span>
       <a href="/rss.xml">rss</a>
+      <Social labels />
     </footer>
   </body>
 </html>

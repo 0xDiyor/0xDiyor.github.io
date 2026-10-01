@@ -133,7 +133,8 @@ time,
 
 footer {
   display: flex;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 8px 16px;
   margin-top: 56px;
   padding: 12px 0 40px;
   border-top: 1px solid var(--rule);
