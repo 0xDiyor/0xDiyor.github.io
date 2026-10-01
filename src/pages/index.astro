@@ -1,52 +1,91 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import AsciiBanner from '../components/AsciiBanner.astro';
-import BountyCard from '../components/BountyCard.astro';
-import PostItem from '../components/PostItem.astro';
-import ProjectCard from '../components/ProjectCard.astro';
+import AsciiName from '../components/AsciiName.astro';
+import Nav from '../components/Nav.astro';
 import { sortedBounties } from '../data/bounties';
 import { fetchAllProjects } from '../data/projects';
-import { fetchRepoMeta } from '../data/github';
 
 const posts = (await getCollection('blog'))
   .sort((a, b) => +b.data.date - +a.data.date)
   .slice(0, 4);
 const bounties = sortedBounties().slice(0, 3);
 const projects = (await fetchAllProjects()).slice(0, 3);
-const repoMeta = await fetchRepoMeta();
+const iso = (d: Date) => d.toISOString().slice(0, 10);
 ---
 
-<Base>
-  <AsciiBanner />
+<Base home>
+  <header class="hero">
+    <h1 class="sr-only">0xDiyor</h1>
+    <AsciiName size="lg" />
+    <p class="dim">Denver · CySA+ · Security+ · Network+</p>
+    <p>
+      IT professional and cybersecurity student, working my way into security. I write about my
+      homelab, things I break, and anything I find cool.
+    </p>
+    <Nav>
+      <a href="https://github.com/0xDiyor" target="_blank" rel="noopener noreferrer">github</a>
+      <a href="https://www.linkedin.com/in/diyor-r/" target="_blank" rel="noopener noreferrer"
+        >linkedin</a
+      >
+    </Nav>
+  </header>
 
-  <div class="home-section">
-    <h2 class="section-title">Recent Writeups</h2>
-    <ul class="post-list">
-      {posts.map((post) => <PostItem post={post} />)}
-    </ul>
-  </div>
+  <h2 class="section-label">recent posts</h2>
+  <ul class="rows">
+    {
+      posts.map((post) => (
+        <li>
+          <time datetime={iso(post.data.date)}>{iso(post.data.date)}</time>
+          <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+        </li>
+      ))
+    }
+  </ul>
 
   {
     bounties.length > 0 && (
-      <div class="home-section">
-        <h2 class="section-title">Recent CVEs & Bounties</h2>
-        <div class="bounty-grid">
-          {bounties.map((bounty) => <BountyCard bounty={bounty} />)}
-        </div>
-      </div>
+      <>
+        <h2 class="section-label">cves &amp; bounties</h2>
+        <ul class="rows">
+          {bounties.map((b) => (
+            <li>
+              <time datetime={b.date}>{b.date}</time>
+              <a href="/cves/">{b.cve ?? b.title}</a>
+            </li>
+          ))}
+        </ul>
+      </>
     )
   }
 
-  <div class="home-section">
-    <h2 class="section-title">Recent Projects</h2>
-    <div class="project-grid">
-      {projects.map((project) => (
-        <ProjectCard
-          project={project}
-          meta={project.github ? repoMeta.get(project.github.toLowerCase()) ?? null : null}
-        />
-      ))}
-    </div>
-  </div>
+  <h2 class="section-label">projects</h2>
+  <ul>
+    {
+      projects.map((p) => (
+        <li class="row-simple">
+          <a class="ext" href={p.github || p.demo || '#'} target="_blank" rel="noopener noreferrer">
+            {p.name}
+          </a>
+          {p.tech[0] && <span class="dim"> — {p.tech[0]}</span>}
+        </li>
+      ))
+    }
+  </ul>
 </Base>
+
+<style>
+  .hero {
+    padding-top: 56px;
+    margin-bottom: 40px;
+  }
+  .hero :global(.ascii-name) {
+    margin-bottom: 12px;
+  }
+  .hero .dim {
+    margin-bottom: 24px;
+  }
+  .row-simple {
+    padding: 4px 0;
+  }
+</style>
