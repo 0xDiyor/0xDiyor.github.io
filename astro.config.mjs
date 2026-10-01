@@ -6,4 +6,6 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://0xdiyor.com',
   integrations: [sitemap()],
+  // Code blocks stay plain black and white; no syntax highlighting colors
+  markdown: { syntaxHighlight: false },
 });
