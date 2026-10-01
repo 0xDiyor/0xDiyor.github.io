@@ -7,6 +7,10 @@ export interface Project {
   tech: string[];
   github: string | null;
   demo: string | null;
+  // Heading the project is grouped under on /projects/; defaults to "Other"
+  category?: string;
+  // Slug of a blog post about the project
+  writeup?: string;
 }
 
 export const PROJECTS: Project[] = [
@@ -18,6 +22,7 @@ export const PROJECTS: Project[] = [
     tech: ['Astro', 'TypeScript', 'Markdown'],
     github: 'https://github.com/0xDiyor/0xDiyor.github.io',
     demo: null,
+    category: 'Sites & coursework',
   },
   {
     name: 'opskit',
@@ -27,6 +32,8 @@ export const PROJECTS: Project[] = [
     tech: ['PowerShell'],
     github: 'https://github.com/0xDiyor/opskit',
     demo: null,
+    category: 'Tools',
+    writeup: 'opskit-zero-dependency-powershell-toolkit',
   },
   {
     name: 'voidkit',
@@ -36,6 +43,7 @@ export const PROJECTS: Project[] = [
     tech: ['Python'],
     github: 'https://github.com/0xDiyor/voidkit',
     demo: null,
+    category: 'Tools',
   },
   {
     name: 'Intro to Programming Python',
@@ -45,6 +53,7 @@ export const PROJECTS: Project[] = [
     tech: ['Python'],
     github: 'https://github.com/0xDiyor/Intro-to-Programming-Python',
     demo: null,
+    category: 'Sites & coursework',
   },
 ];
 

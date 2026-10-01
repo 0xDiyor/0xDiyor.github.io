@@ -1,0 +1,41 @@
+---
+import type { Project } from '../data/projects';
+
+interface Props {
+  project: Project;
+  // Home shows the language on the right; the projects page shows the month
+  aside?: 'tech' | 'date';
+}
+
+const { project, aside = 'date' } = Astro.props;
+const url = project.github || project.demo || '#';
+---
+
+<div class="record">
+  <span class="record-head">
+    <a class="record-title ext" href={url} target="_blank" rel="noopener noreferrer">
+      {project.name}
+    </a>
+    {
+      aside === 'date' ? (
+        <time datetime={project.date}>{project.date.slice(0, 7)}</time>
+      ) : (
+        project.tech[0] && <span class="aside">{project.tech[0]}</span>
+      )
+    }
+  </span>
+  {project.description && <span class="record-desc">{project.description}</span>}
+  {
+    aside === 'date' && (project.tech.length > 0 || project.writeup) && (
+      <span class="record-meta">
+        {project.tech.join(' · ')}
+        {project.writeup && (
+          <>
+            {project.tech.length > 0 && ' · '}
+            <a href={`/blog/${project.writeup}/`}>writeup</a>
+          </>
+        )}
+      </span>
+    )
+  }
+</div>

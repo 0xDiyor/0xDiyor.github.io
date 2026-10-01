@@ -1,0 +1,21 @@
+---
+import { isoDate, readingTime, type Post } from '../utils/posts';
+
+interface Props {
+  post: Post;
+  // Blog index groups by year, so it only needs month and day
+  short?: boolean;
+}
+
+const { post, short = false } = Astro.props;
+const iso = isoDate(post.data.date);
+---
+
+<a class="record" href={`/blog/${post.id}/`}>
+  <span class="record-head">
+    <span class="record-title">{post.data.title}</span>
+    <time datetime={iso}>{short ? iso.slice(5) : iso}</time>
+  </span>
+  <span class="record-desc">{post.data.description}</span>
+  <span class="record-meta">{[`${readingTime(post)} min`, ...post.data.tags].join(' · ')}</span>
+</a>
