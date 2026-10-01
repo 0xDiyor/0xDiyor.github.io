@@ -1,24 +1,22 @@
 ---
 import '../styles/global.css';
+import AsciiName from '../components/AsciiName.astro';
+import Nav from '../components/Nav.astro';
 
 interface Props {
   title?: string;
   description?: string;
+  // The home page draws its own large name and nav, so it skips the header
+  home?: boolean;
 }
 
 const {
   title = '0xDiyor',
   description = 'Portfolio and blog covering cybersecurity projects, hands-on writeups, and CVE and bug bounty research.',
+  home = false,
 } = Astro.props;
 
 const path = Astro.url.pathname;
-const navItems = [
-  { href: '/blog/', label: 'blog' },
-  { href: '/projects/', label: 'projects' },
-  { href: '/cves/', label: 'cves' },
-  { href: '/about/', label: 'about' },
-];
-const isActive = (href: string) => path.startsWith(href);
 ---
 
 <html lang="en">
@@ -27,7 +25,7 @@ const isActive = (href: string) => path.startsWith(href);
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#0a0a0f" />
+    <meta name="theme-color" content="#000000" />
     <meta name="color-scheme" content="dark" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -43,36 +41,29 @@ const isActive = (href: string) => path.startsWith(href);
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;0,700;1,400&display=swap"
       rel="stylesheet"
     />
   </head>
   <body>
-    <nav class="site-nav">
-      <div class="container nav-inner">
-        <a href="/" class="nav-brand"
-          ><span class="prompt">~$ </span>0xdiyor<span class="cursor">▊</span></a
-        >
-        <ul class="nav-links">
-          {navItems.map((item) => (
-            <li>
-              <a href={item.href} class={isActive(item.href) ? 'active' : undefined}>
-                {item.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </nav>
+    {
+      !home && (
+        <header class="bar">
+          <a href="/" class="brand" aria-label="0xDiyor home">
+            <AsciiName size="sm" />
+          </a>
+          <Nav />
+        </header>
+      )
+    }
 
-    <main class="container">
+    <main>
       <slot />
     </main>
 
-    <footer class="site-footer">
-      <div class="container">
-        <span>0xDiyor</span> &middot; <a href="/rss.xml">rss</a>
-      </div>
+    <footer>
+      <span>&copy; {new Date().getFullYear()} 0xDiyor</span>
+      <a href="/rss.xml">rss</a>
     </footer>
   </body>
 </html>
