@@ -2,7 +2,7 @@
 title: "Self-Hosting Matrix: Tuwunel, E2EE, and What Went Wrong"
 date: 2026-08-14
 tags: ["matrix", "selfhosting", "security", "e2ee"]
-description: "Setting up a self-hosted Matrix homeserver with Tuwunel for Hermes messaging on my iPhone, enabling E2EE, and the problems I ran into along the way."
+description: "Self-hosting a Matrix homeserver with Tuwunel and enabling E2EE."
 ---
 
 I wanted Hermes, my automation assistant, to deliver messages to my iPhone: cron job output, job search digests, reminders. This post covers how I set up a self-hosted Matrix homeserver for that, how I enabled end-to-end encryption, and the problems I hit along the way.

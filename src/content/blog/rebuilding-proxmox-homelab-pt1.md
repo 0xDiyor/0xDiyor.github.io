@@ -2,7 +2,7 @@
 title: "Rebuilding My Proxmox Homelab from Scratch — Part 1: Base Install and Tailscale"
 date: 2026-04-22
 tags: ["homelab", "proxmox", "networking"]
-description: "Documenting a full Proxmox rebuild on a Minisforum 790 Pro — ZFS setup, static IP reservation, and Tailscale in an unprivileged LXC with TUN access."
+description: "Proxmox base install with ZFS, a static IP, and Tailscale in an unprivileged LXC."
 series: "Proxmox rebuild"
 ---
 ## Context

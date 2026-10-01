@@ -2,7 +2,7 @@
 title: "Building a Cybersecurity Homelab with Proxmox"
 date: 2026-04-05
 tags: ["homelab", "proxmox", "infrastructure"]
-description: "Documenting my homelab architecture: Proxmox, OPNsense, Suricata, Wazuh, and more."
+description: "My homelab architecture: Proxmox, OPNsense, Suricata, and Wazuh."
 ---
 ## Overview
 

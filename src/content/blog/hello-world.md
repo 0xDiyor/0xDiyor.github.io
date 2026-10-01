@@ -2,7 +2,7 @@
 title: "Hello World — Setting Up My Security Blog"
 date: 2026-04-03
 tags: ["blog"]
-description: "First post — why I built this site and what's coming next."
+description: "Why I built this site and what's coming next."
 ---
 ## Why This Site Exists
 
