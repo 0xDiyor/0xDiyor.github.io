@@ -1,17 +1,16 @@
 ---
-import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import AsciiName from '../components/AsciiName.astro';
 import Nav from '../components/Nav.astro';
+import PostRecord from '../components/PostRecord.astro';
+import ProjectRecord from '../components/ProjectRecord.astro';
+import { getSortedPosts } from '../utils/posts';
 import { sortedBounties } from '../data/bounties';
 import { fetchAllProjects } from '../data/projects';
 
-const posts = (await getCollection('blog'))
-  .sort((a, b) => +b.data.date - +a.data.date)
-  .slice(0, 4);
+const posts = (await getSortedPosts()).slice(0, 3);
 const bounties = sortedBounties().slice(0, 3);
 const projects = (await fetchAllProjects()).slice(0, 3);
-const iso = (d: Date) => d.toISOString().slice(0, 10);
 ---
 
 <Base home>
@@ -31,61 +30,49 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
     </Nav>
   </header>
 
-  <h2 class="section-label">recent posts</h2>
-  <ul class="rows">
-    {
-      posts.map((post) => (
-        <li>
-          <time datetime={iso(post.data.date)}>{iso(post.data.date)}</time>
-          <a href={`/blog/${post.id}/`}>{post.data.title}</a>
-        </li>
-      ))
-    }
-  </ul>
+  <section>
+    <h2 class="label"><span>Writing</span><a href="/blog/">all posts</a></h2>
+    {posts.map((post) => <PostRecord post={post} />)}
+  </section>
 
   {
     bounties.length > 0 && (
-      <>
-        <h2 class="section-label">cves &amp; bounties</h2>
-        <ul class="rows">
-          {bounties.map((b) => (
-            <li>
+      <section>
+        <h2 class="label">
+          <span>CVEs &amp; bounties</span>
+          <a href="/cves/">all advisories</a>
+        </h2>
+        {bounties.map((b) => (
+          <a class="record" href="/cves/">
+            <span class="record-head">
+              <span class="record-title">
+                <span class={`sev sev-${b.severity.toLowerCase()}`}>{b.severity.toUpperCase()}</span>
+                {b.cve ?? b.program}
+              </span>
               <time datetime={b.date}>{b.date}</time>
-              <a href="/cves/">{b.cve ?? b.title}</a>
-            </li>
-          ))}
-        </ul>
-      </>
+            </span>
+            <span class="record-desc">{b.title}</span>
+          </a>
+        ))}
+      </section>
     )
   }
 
-  <h2 class="section-label">projects</h2>
-  <ul>
-    {
-      projects.map((p) => (
-        <li class="row-simple">
-          <a class="ext" href={p.github || p.demo || '#'} target="_blank" rel="noopener noreferrer">
-            {p.name}
-          </a>
-          {p.tech[0] && <span class="dim"> — {p.tech[0]}</span>}
-        </li>
-      ))
-    }
-  </ul>
+  <section>
+    <h2 class="label"><span>Projects</span><a href="/projects/">all projects</a></h2>
+    {projects.map((project) => <ProjectRecord project={project} aside="tech" />)}
+  </section>
 </Base>
 
 <style>
   .hero {
     padding-top: 56px;
-    margin-bottom: 40px;
+    margin-bottom: 48px;
   }
   .hero :global(.ascii-name) {
     margin-bottom: 12px;
   }
   .hero .dim {
     margin-bottom: 24px;
-  }
-  .row-simple {
-    padding: 4px 0;
   }
 </style>
