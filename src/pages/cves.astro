@@ -8,16 +8,27 @@ const isExternal = (url: string) => url.startsWith('http');
 
 <Base title="0xDiyor — CVEs & Bounties">
   <h1 class="page-title">cves &amp; bounties</h1>
+  <p class="page-sub">Published advisories and bug bounty findings.</p>
 
-  {
-    bounties.length === 0 ? (
-      <p class="dim">No advisories published yet.</p>
-    ) : (
-      <ul class="rows">
-        {bounties.map((b) => (
-          <li>
-            <time datetime={b.date}>{b.date}</time>
-            <span>
+  <section>
+    <h2 class="label">
+      <span>Advisories</span>
+      <span>{bounties.length}</span>
+    </h2>
+    {
+      bounties.length === 0 ? (
+        <p class="empty">No advisories published yet.</p>
+      ) : (
+        bounties.map((b) => (
+          <div class="record">
+            <span class="record-head">
+              <span class="record-title">
+                <span class={`sev sev-${b.severity.toLowerCase()}`}>{b.severity.toUpperCase()}</span>
+                {b.cve ?? b.type[0] ?? 'Advisory'}
+              </span>
+              <time datetime={b.date}>{b.date}</time>
+            </span>
+            <span class="record-desc">
               {b.programUrl ? (
                 <a href={b.programUrl} target="_blank" rel="noopener noreferrer">
                   {b.program}
@@ -27,25 +38,26 @@ const isExternal = (url: string) => url.startsWith('http');
               )}
               {' · '}
               {b.title}
-              <span class="sub">
-                {[b.cve, b.severity, ...b.type].filter(Boolean).join(' · ')}
-                {b.bounty != null && ` · $${b.bounty.toLocaleString('en-US')}`}
-                {b.links.map((link) => (
-                  <>
-                    {' · '}
-                    <a
-                      href={link.url}
-                      {...(isExternal(link.url) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                    >
-                      {link.label}
-                    </a>
-                  </>
-                ))}
-              </span>
             </span>
-          </li>
-        ))}
-      </ul>
-    )
-  }
+            <span class="record-meta">
+              {[...b.type, b.bounty != null ? `$${b.bounty.toLocaleString('en-US')}` : null]
+                .filter(Boolean)
+                .join(' · ')}
+              {b.links.map((link) => (
+                <>
+                  {' · '}
+                  <a
+                    href={link.url}
+                    {...(isExternal(link.url) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                  >
+                    {link.label}
+                  </a>
+                </>
+              ))}
+            </span>
+          </div>
+        ))
+      )
+    }
+  </section>
 </Base>

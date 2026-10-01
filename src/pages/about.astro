@@ -4,50 +4,49 @@ import Base from '../layouts/Base.astro';
 
 <Base title="0xDiyor — About">
   <h1 class="page-title">about</h1>
+  <p class="page-sub">IT Security Intern · Denver, CO</p>
 
-  <div class="cmd">whoami</div>
-  <dl class="kv">
-    <dt>role</dt><dd>cybersecurity student · IT professional</dd>
-    <dt>edu</dt><dd>WGU B.S. (Aug 2028)</dd>
-    <dt>certs</dt><dd>CySA+ · Security+ · Network+ · AZ-104 · NCA-AIIO</dd>
-    <dt>lab</dt><dd>Proxmox · Wazuh · Tailscale</dd>
-    <dt>focus</dt><dd>SOC analyst · pentesting</dd>
-  </dl>
+  <section>
+    <h2 class="label"><span>Bio</span></h2>
+    <div class="bio">
+      <p>
+        I'm Diyor, an IT professional working my way into security. I run a Proxmox homelab
+        with Wazuh, Tailscale, and whatever I'm currently studying. This blog is where I
+        document it all.
+      </p>
+      <p>
+        I'm an IT Security Intern for local government, working with NIST 800-53 and CJIS
+        requirements. I also work IT support at a community college with 8,000 users, handling
+        endpoints, tickets, and account management. I'm working through a B.S. in Cybersecurity
+        and Information Assurance at WGU, on track for August 2028. I'm aiming and working
+        towards SOC analyst, security engineering, and pentesting roles.
+      </p>
+    </div>
+  </section>
 
-  <div class="cmd">cat bio.txt</div>
-  <div class="prose">
-    <p>
-      I'm Diyor, an IT professional working my way into security. I run a Proxmox homelab
-      with Wazuh, Tailscale, and whatever I'm currently studying. This blog is where I
-      document it all.
-    </p>
-    <p>
-      I'm an IT Security Intern for local government, working with NIST 800-53 and CJIS
-      requirements. I also work IT support at a community college with 8,000 users, handling
-      endpoints, tickets, and account management. I'm working through a B.S. in Cybersecurity
-      and Information Assurance at WGU, on track for August 2028. I'm aiming and working
-      towards SOC analyst, security engineering, and pentesting roles.
-    </p>
-  </div>
+  <section>
+    <h2 class="label"><span>Details</span></h2>
+    <dl class="kv">
+      <dt>role</dt><dd>IT Security Intern · IT support</dd>
+      <dt>edu</dt><dd>WGU B.S. Cybersecurity &amp; Information Assurance (Aug 2028)</dd>
+      <dt>certs</dt><dd>CySA+ · Security+ · Network+ · AZ-104 · NCA-AIIO</dd>
+      <dt>lab</dt><dd>Proxmox · Wazuh · Tailscale</dd>
+      <dt>focus</dt><dd>SOC analyst · security engineering · pentesting</dd>
+    </dl>
+  </section>
 
-  <div class="cmd">cat now.txt</div>
-  <ul class="dash">
-    <li>writing Wazuh detection rules for the homelab</li>
-    <li>Proxmox rebuild series — part 3 in progress</li>
-  </ul>
-  <p class="dim stamp">last updated 2026-07-10</p>
+  <section>
+    <h2 class="label"><span>Now</span><span>updated 2026-07-10</span></h2>
+    <p class="record">writing Wazuh detection rules for the homelab</p>
+    <p class="record">Proxmox rebuild series — part 3 in progress</p>
+  </section>
 
-  <div class="cmd">contact</div>
-  <nav class="links">
-    <a href="https://github.com/0xDiyor" target="_blank" rel="noopener noreferrer">github</a>
-    <a href="https://www.linkedin.com/in/diyor-r/" target="_blank" rel="noopener noreferrer">linkedin</a>
-    <a href="/rss.xml">rss</a>
-  </nav>
+  <section>
+    <h2 class="label"><span>Contact</span></h2>
+    <nav class="links record">
+      <a href="https://github.com/0xDiyor" target="_blank" rel="noopener noreferrer">github</a>
+      <a href="https://www.linkedin.com/in/diyor-r/" target="_blank" rel="noopener noreferrer">linkedin</a>
+      <a href="/rss.xml">rss</a>
+    </nav>
+  </section>
 </Base>
-
-<style>
-  .stamp {
-    font-size: 12px;
-    margin-top: 6px;
-  }
-</style>
