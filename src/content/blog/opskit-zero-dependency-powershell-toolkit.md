@@ -2,7 +2,7 @@
 title: "opskit: A Zero-Dependency PowerShell Diagnostics Toolkit for Windows"
 date: 2026-08-04
 tags: ["powershell", "tooling", "scripting", "projects"]
-description: "A zero-dependency PowerShell diagnostics toolkit for Windows: what's in it and how CI tests it."
+description: "A single-file PowerShell toolkit for everyday helpdesk diagnostics: ports, DNS, certs, and system health, with zero dependencies."
 ---
 
 opskit is a terminal based diagnostics toolkit for Windows that puts the checks a helpdesk runs dozens of times a week behind one menu. This post covers the design decisions, what's in it, how CI validates it, and the script runner I'm deliberately holding back.

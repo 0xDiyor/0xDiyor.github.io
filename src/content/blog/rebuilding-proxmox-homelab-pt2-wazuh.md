@@ -2,7 +2,7 @@
 title: "Rebuilding My Proxmox Homelab from Scratch — Part 2: Wazuh SIEM"
 date: 2026-04-28
 tags: ["homelab", "proxmox", "security", "wazuh"]
-description: "Deploying all-in-one Wazuh on Ubuntu 24.04 in a Proxmox VM and enrolling the first agent."
+description: "Deploying all-in-one Wazuh on Ubuntu 24.04 in Proxmox, fixing an LVM volume that only claimed half the disk, and enrolling the first agent."
 series: "Proxmox rebuild"
 ---
 After getting Tailscale running in part 1, the next thing I wanted was a robust SIEM solution to play around with. So the next step was deploying Wazuh.

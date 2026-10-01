@@ -2,7 +2,7 @@
 title: "Hello World — Setting Up My Security Blog"
 date: 2026-04-03
 tags: ["blog"]
-description: "Why I built this site and what's coming next."
+description: "Why this site exists and what to expect: homelab writeups, CTF walkthroughs, tool deep-dives, and learning notes."
 ---
 ## Why This Site Exists
 

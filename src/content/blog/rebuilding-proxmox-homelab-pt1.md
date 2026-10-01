@@ -2,7 +2,7 @@
 title: "Rebuilding My Proxmox Homelab from Scratch — Part 1: Base Install and Tailscale"
 date: 2026-04-22
 tags: ["homelab", "proxmox", "networking"]
-description: "Proxmox base install with ZFS, a static IP, and Tailscale in an unprivileged LXC."
+description: "Rebuilding Proxmox from a clean install: ZFS, a static IP, and Tailscale running inside an unprivileged LXC with TUN access."
 series: "Proxmox rebuild"
 ---
 ## Context
