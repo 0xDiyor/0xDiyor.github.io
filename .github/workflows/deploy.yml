@@ -5,7 +5,8 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    # Nightly rebuild so pinned GitHub repos stay at most a day old
+    # Nightly rebuild so build-time GitHub data (pinned repos and the
+    # contribution graph on /projects/) stays at most a day old
     - cron: '0 9 * * *'
 
 permissions:
@@ -13,18 +14,25 @@ permissions:
   pages: write
   id-token: write
 
+# One deploy at a time: back-to-back pushes queue instead of racing.
+# In-progress deploys aren't cancelled, so a half-finished one never ships.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # Authenticated GitHub API requests during the build (src/data/github.ts)
-      # so shared CI runners don't hit the anonymous rate limit
+      # Required by src/data/github.ts: pinned repos and the contribution
+      # graph come from the GraphQL API, which only accepts authenticated
+      # requests. Without it the build still passes but leaves both out.
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Build site
-        uses: withastro/action@v3
+        uses: withastro/action@v6
 
   deploy:
     needs: build
@@ -35,4 +43,4 @@ jobs:
     steps:
       - name: Deploy
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
