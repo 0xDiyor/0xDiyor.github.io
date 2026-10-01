@@ -16,6 +16,7 @@ const plural = (n: number) => `${n} post${n === 1 ? '' : 's'}`;
 
 <Base title="0xDiyor — Blog">
   <h1 class="page-title">blog</h1>
+  <p class="page-sub">Writings about my homelab and security research.</p>
   {
     [...years].map(([year, list]) => (
       <section>
@@ -28,10 +29,3 @@ const plural = (n: number) => `${n} post${n === 1 ? '' : 's'}`;
     ))
   }
 </Base>
-
-<style>
-  /* No subtitle here, so give the title the space the subtitle would have */
-  .page-title {
-    margin-bottom: 36px;
-  }
-</style>
