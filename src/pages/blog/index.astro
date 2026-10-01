@@ -1,39 +1,34 @@
 ---
-import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import PostRecord from '../../components/PostRecord.astro';
+import { getSortedPosts, type Post } from '../../utils/posts';
 
-const posts = (await getCollection('blog')).sort((a, b) => +b.data.date - +a.data.date);
+const posts = await getSortedPosts();
 
-// Group by year so each row only needs month and day
-const years = new Map<number, typeof posts>();
+// Group by year so each record only needs month and day
+const years = new Map<number, Post[]>();
 for (const post of posts) {
   const y = post.data.date.getUTCFullYear();
   years.set(y, [...(years.get(y) ?? []), post]);
 }
-const iso = (d: Date) => d.toISOString().slice(0, 10);
+const plural = (n: number) => `${n} post${n === 1 ? '' : 's'}`;
 ---
 
 <Base title="0xDiyor — Blog">
   <h1 class="page-title">blog</h1>
-  <p class="dim">
-    Writeups on my homelab, tooling, and whatever I'm breaking. <a href="/rss.xml">rss</a>
+  <p class="page-sub">
+    {plural(posts.length)} on my homelab, tooling, and whatever I'm breaking.
+    <a href="/rss.xml">rss</a>
   </p>
   {
     [...years].map(([year, list]) => (
-      <>
-        <h2 class="year">{year}</h2>
-        <ul class="rows">
-          {list.map((post) => (
-            <li>
-              <time datetime={iso(post.data.date)}>{iso(post.data.date).slice(5).replace('-', '.')}</time>
-              <span>
-                <a href={`/blog/${post.id}/`}>{post.data.title}</a>
-                <span class="sub">{post.data.tags.join(' · ')}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
-      </>
+      <section>
+        <h2 class="label">
+          <span>{year}</span>
+          <span>{plural(list.length)}</span>
+        </h2>
+        {list.map((post) => <PostRecord post={post} short />)}
+      </section>
     ))
   }
 </Base>
