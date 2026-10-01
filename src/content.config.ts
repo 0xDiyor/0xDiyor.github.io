@@ -11,6 +11,8 @@ const blog = defineCollection({
     date: z.coerce.date(),
     tags: z.array(z.string()).default([]),
     description: z.string(),
+    // Posts sharing a series name link to each other, ordered by date
+    series: z.string().optional(),
   }),
 });
 
