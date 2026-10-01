@@ -85,14 +85,19 @@ const { size = 'sm' } = Astro.props;
       // Cells are taller than wide, so stretch the word horizontally by ch/cw
       // to keep its proportions once each pixel becomes a character
       const stretch = this.ch / this.cw;
-      let size = this.rows * 1.05;
-      mc.font = `700 ${size}px ${FONT}`;
-      size *= Math.min(1, (this.cols * 0.98) / (mc.measureText(WORD).width * stretch));
-      mc.font = `700 ${size}px ${FONT}`;
+      // Measure the real ink box (top of the "D" to the bottom of the "y")
+      // at a reference size, then scale so the whole word fits the grid
+      const REF = 100;
+      mc.font = `700 ${REF}px ${FONT}`;
+      const metrics = mc.measureText(WORD);
+      const ascent = metrics.actualBoundingBoxAscent;
+      const inkH = ascent + metrics.actualBoundingBoxDescent;
+      const scale = Math.min(this.rows / inkH, (this.cols * 0.98) / (metrics.width * stretch));
+      mc.font = `700 ${REF * scale}px ${FONT}`;
       mc.setTransform(stretch, 0, 0, 1, 0, 0);
-      mc.textBaseline = 'middle';
+      mc.textBaseline = 'alphabetic';
       mc.fillStyle = '#fff';
-      mc.fillText(WORD, 0, this.rows / 2 + 0.5);
+      mc.fillText(WORD, 0, (this.rows - inkH * scale) / 2 + ascent * scale);
       const data = mc.getImageData(0, 0, this.cols, this.rows).data;
       this.mask = new Float32Array(this.cols * this.rows);
       for (let i = 0; i < this.mask.length; i++) this.mask[i] = data[i * 4 + 3] / 255;
