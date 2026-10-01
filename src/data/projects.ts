@@ -7,13 +7,22 @@ export interface Project {
   tech: string[];
   github: string | null;
   demo: string | null;
-  // Heading the project is grouped under on /projects/; defaults to "Other"
+  // Heading the project is grouped under on /projects/; defaults to "Tools"
   category?: string;
   // Slug of a blog post about the project
   writeup?: string;
 }
 
 export const PROJECTS: Project[] = [
+  {
+    name: 'netstick',
+    date: '2026-09-02',
+    description: 'Network doctor and walking Wi-Fi site survey for the LilyGO T-Dongle-C5.',
+    tech: ['C', 'Python'],
+    github: 'https://github.com/0xDiyor/netstick',
+    demo: null,
+    category: 'Tools',
+  },
   {
     name: '0xDiyor.github.io',
     date: '2026-08-14',
