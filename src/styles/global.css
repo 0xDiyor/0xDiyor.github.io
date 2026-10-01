@@ -264,16 +264,14 @@ a.record:hover .record-title {
   border-bottom: 1px solid var(--rule);
   font-size: 13px;
 }
-.spec dt,
-.kv dt {
+.spec dt {
   color: var(--dim);
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   padding-top: 2px;
 }
-.spec dd,
-.kv dd {
+.spec dd {
   margin: 0;
 }
 /* Contents and section headings share one numbering */
@@ -416,19 +414,6 @@ a.record:hover .record-title {
   color: var(--body);
   padding-top: 14px;
 }
-.kv {
-  display: grid;
-  grid-template-columns: 9ch 1fr;
-  gap: 0 2ch;
-  margin: 0;
-}
-.kv > * {
-  padding: 10px 0;
-  border-bottom: 1px solid var(--faint);
-}
-.kv dt {
-  padding-top: 12px;
-}
 
 @media (max-width: 600px) {
   body {
@@ -438,12 +423,7 @@ a.record:hover .record-title {
     flex-direction: column;
     gap: 0;
   }
-  .spec,
-  .kv {
+  .spec {
     grid-template-columns: 1fr;
-  }
-  .kv dt {
-    padding-bottom: 0;
-    border-bottom: 0;
   }
 }
