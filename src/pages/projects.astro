@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import ProjectRecord from '../components/ProjectRecord.astro';
+import ContributionGraph from '../components/ContributionGraph.astro';
 import { fetchAllProjects, type Project } from '../data/projects';
 
 const projects = await fetchAllProjects();
@@ -24,6 +25,7 @@ const sections = [...groups].filter(([, list]) => list.length > 0);
 <Base title="0xDiyor — Projects">
   <h1 class="page-title">projects</h1>
   <p class="page-sub">Things I've built and am working on.</p>
+  <ContributionGraph />
   {
     sections.map(([name, list]) => (
       <section>

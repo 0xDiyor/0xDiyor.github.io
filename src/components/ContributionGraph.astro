@@ -1,0 +1,176 @@
+---
+// GitHub contribution graph drawn as pixels, like the favicon. Desktop shows
+// the full year; phones get the last 26 weeks so the cells stay full size.
+// Built entirely at build time: hovering a day uses the SVG <title> tooltip.
+import { fetchContributions, type ContributionDay } from '../data/github';
+
+const days = await fetchContributions();
+
+const CELL = 10;
+const GAP = 2;
+const STEP = CELL + GAP;
+const TOP = 18; // room for month labels above the grid
+const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+
+// Absolute thresholds rather than quartiles, so a quiet year still shows
+// its busy days as bright
+const level = (n: number) => (n === 0 ? 0 : n <= 2 ? 1 : n <= 6 ? 2 : n <= 15 ? 3 : 4);
+
+const label = (d: ContributionDay) => {
+  const [y, m, dd] = d.date.split('-');
+  const when = `${MONTHS[+m - 1].replace(/^./, (c) => c.toUpperCase())} ${+dd}, ${y}`;
+  return `${when} · ${d.count ? `${d.count} contribution${d.count === 1 ? '' : 's'}` : 'no contributions'}`;
+};
+
+// Group into Sunday-first weeks, the way GitHub draws them
+const weeks: ContributionDay[][] = [];
+for (const d of days) {
+  if (d.weekday === 0 || weeks.length === 0) weeks.push([]);
+  weeks[weeks.length - 1].push(d);
+}
+
+function layout(range: ContributionDay[][]) {
+  const cells = range.flatMap((week, x) =>
+    week.map((d) => ({ x: x * STEP, y: TOP + d.weekday * STEP, level: level(d.count), title: label(d) }))
+  );
+  // Label a month on the first week that starts inside it, skipping the
+  // last column so a label never runs off the right edge
+  const months: { x: number; text: string }[] = [];
+  let last = -1;
+  range.forEach((week, x) => {
+    const m = +week[0].date.slice(5, 7) - 1;
+    if (m !== last) {
+      if (+week[0].date.slice(8) <= 7 && x < range.length - 2) months.push({ x: x * STEP, text: MONTHS[m] });
+      last = m;
+    }
+  });
+  const total = range.flat().reduce((sum, d) => sum + d.count, 0);
+  return { cells, months, total, width: range.length * STEP - GAP, height: TOP + 7 * STEP - GAP };
+}
+
+const year = layout(weeks);
+const half = layout(weeks.slice(-26));
+const views = [
+  { cls: 'year', g: year, span: 'last year' },
+  { cls: 'half', g: half, span: 'last 6 months' },
+];
+---
+
+{
+  days.length > 0 && (
+    <section class="graph" aria-label="GitHub contributions">
+      {views.map((v) => (
+        <div class={`view view-${v.cls}`}>
+          <div class="graph-head">
+            <span class="graph-total">
+              {v.g.total} contributions in the {v.span}
+            </span>
+            <a href="https://github.com/0xDiyor" target="_blank" rel="noopener noreferrer">
+              github.com/0xDiyor
+            </a>
+          </div>
+          <svg
+            width={v.g.width}
+            height={v.g.height}
+            viewBox={`0 0 ${v.g.width} ${v.g.height}`}
+            role="img"
+            aria-label={`${v.g.total} GitHub contributions in the ${v.span}`}
+          >
+            {v.g.months.map((m) => (
+              <text x={m.x} y="10">
+                {m.text}
+              </text>
+            ))}
+            {v.g.cells.map((c) => (
+              <rect x={c.x} y={c.y} width={CELL} height={CELL} class={`l${c.level}`}>
+                <title>{c.title}</title>
+              </rect>
+            ))}
+          </svg>
+        </div>
+      ))}
+      <div class="graph-foot">
+        <span class="legend">
+          less <i class="l0" /><i class="l1" /><i class="l2" /><i class="l3" /><i class="l4" /> more
+        </span>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .graph {
+    margin-bottom: 48px;
+    font-variant-numeric: tabular-nums;
+  }
+  .graph-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    margin-bottom: 12px;
+  }
+  .graph-total {
+    font-weight: 600;
+  }
+  .graph-head a {
+    color: var(--dim);
+    font-size: 12px;
+  }
+  .graph-head a:hover {
+    color: var(--text);
+  }
+  svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+  text {
+    fill: var(--dim);
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+  rect {
+    shape-rendering: crispEdges;
+  }
+  rect:hover {
+    stroke: var(--text);
+    stroke-width: 1;
+  }
+  .graph-foot {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--dim);
+  }
+  .legend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .legend i {
+    width: 10px;
+    height: 10px;
+  }
+  /* Shades from no activity to busiest; fill for the grid, background for the legend */
+  .l0 { fill: #161616; background: #161616; }
+  .l1 { fill: #4a4a4a; background: #4a4a4a; }
+  .l2 { fill: #8a8a8a; background: #8a8a8a; }
+  .l3 { fill: #c8c8c8; background: #c8c8c8; }
+  .l4 { fill: #fff; background: #fff; }
+
+  /* Full year on wider screens, last 6 months on phones */
+  .view-half {
+    display: none;
+  }
+  @media (max-width: 680px) {
+    .view-year {
+      display: none;
+    }
+    .view-half {
+      display: block;
+    }
+  }
+</style>
