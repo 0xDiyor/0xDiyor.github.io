@@ -1,16 +1,39 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import PostItem from '../../components/PostItem.astro';
 
-const posts = (await getCollection('blog')).sort(
-  (a, b) => +b.data.date - +a.data.date
-);
+const posts = (await getCollection('blog')).sort((a, b) => +b.data.date - +a.data.date);
+
+// Group by year so each row only needs month and day
+const years = new Map<number, typeof posts>();
+for (const post of posts) {
+  const y = post.data.date.getUTCFullYear();
+  years.set(y, [...(years.get(y) ?? []), post]);
+}
+const iso = (d: Date) => d.toISOString().slice(0, 10);
 ---
 
 <Base title="0xDiyor — Blog">
-  <h2 class="section-title">Blog</h2>
-  <ul class="post-list">
-    {posts.map((post) => <PostItem post={post} />)}
-  </ul>
+  <h1 class="page-title">blog</h1>
+  <p class="dim">
+    Writeups on my homelab, tooling, and whatever I'm breaking. <a href="/rss.xml">rss</a>
+  </p>
+  {
+    [...years].map(([year, list]) => (
+      <>
+        <h2 class="year">{year}</h2>
+        <ul class="rows">
+          {list.map((post) => (
+            <li>
+              <time datetime={iso(post.data.date)}>{iso(post.data.date).slice(5).replace('-', '.')}</time>
+              <span>
+                <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+                <span class="sub">{post.data.tags.join(' · ')}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </>
+    ))
+  }
 </Base>

@@ -1,7 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -15,36 +14,41 @@ const { post } = Astro.props;
 const { Content, headings } = await render(post);
 // TOC lists h2 headings only, matching the site's post conventions
 const toc = headings.filter((h) => h.depth === 2);
+const iso = post.data.date.toISOString().slice(0, 10);
 ---
 
 <Base title={`${post.data.title} — 0xDiyor`} description={post.data.description}>
-  <a href="/blog/" class="post-back">../blog</a>
   <article>
-    <div class="post-header">
-      <h1>{post.data.title}</h1>
-      <div class="post-meta">
-        <FormattedDate date={post.data.date} />
-        {post.data.tags.map((tag) => <span class="post-tag">{tag}</span>)}
-      </div>
+    <h1 class="post-title">{post.data.title}</h1>
+    <div class="post-meta">
+      <time datetime={iso}>{iso}</time>
+      {post.data.tags.length > 0 && <span> · {post.data.tags.join(' · ')}</span>}
     </div>
 
     {
       toc.length > 0 && (
-        <details class="post-toc" open>
-          <summary>Table of Contents</summary>
-          <ol>
+        <nav class="toc" aria-label="Contents">
+          <span class="dim">contents</span>
+          <ul>
             {toc.map((h) => (
               <li>
                 <a href={`#${h.slug}`}>{h.text}</a>
               </li>
             ))}
-          </ol>
-        </details>
+          </ul>
+        </nav>
       )
     }
 
-    <div class="post-content">
+    <div class="prose">
       <Content />
     </div>
   </article>
+  <p class="dim back">&larr; <a href="/blog/">all posts</a></p>
 </Base>
+
+<style>
+  .back {
+    margin-top: 40px;
+  }
+</style>
